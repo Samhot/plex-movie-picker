@@ -22,3 +22,4 @@ export * from './lib/validators/IsNumberOrString';
 export * from './lib/validators/ZodJson';
 export * from './lib/domain/IUseCase';
 export * from './lib/domain/IResponse';
+export * from './lib/utils/filterNullValues';
