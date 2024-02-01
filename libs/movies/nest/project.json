@@ -1,0 +1,19 @@
+{
+  "name": "movies",
+  "$schema": "../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "movies/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "movies/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

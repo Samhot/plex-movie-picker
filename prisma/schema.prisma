@@ -1,0 +1,72 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Genre {
+  id     String  @id @default(cuid())
+  name   String
+  movies Movie[]
+}
+
+model Movie {
+  id             String  @id @default(cuid())
+  title          String
+  guid           String  @unique
+  slug           String  @unique
+  year           Int
+  tagline        String
+  duration       Int
+  audienceRating Float
+  summary        String?
+  thumb          String
+  genres         Genre[]
+  swipes         Swipe[]
+  matches        Match[]
+}
+
+model User {
+  id       String    @id @default(cuid())
+  name     String
+  sessions Session[]
+  swipes   Swipe[]
+  matches  Match[]
+}
+
+model Session {
+  id        String    @id @default(cuid())
+  users     User[]
+  swipes    Swipe[]
+  startedAt DateTime  @default(now())
+  endedAt   DateTime?
+  matches   Match[]
+}
+
+model Swipe {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  liked     Boolean
+  createdAt DateTime @default(now())
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  users     User[]
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  createdAt DateTime @default(now())
+}

@@ -3,18 +3,27 @@
   "compilerOptions": {
     "rootDir": ".",
     "sourceMap": true,
-    "declaration": false,
+    "declaration": true,
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "importHelpers": true,
-    "target": "es2015",
+    "target": "es2021",
     "module": "esnext",
-    "lib": ["es2020", "dom"],
+    "lib": ["es2021"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
-    "paths": {}
+    "strictPropertyInitialization": false,
+    "paths": {
+      "@plex-tinder/auth/core": ["libs/auth/core/src/index.ts"],
+      "@plex-tinder/auth/nest": ["libs/auth/nest/src/index.ts"],
+      "@plex-tinder/movies": ["libs/movies/nest/src/index.ts"],
+      "@plex-tinder/movies/core": ["libs/movies/core/src/index.ts"],
+      "@plex-tinder/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@plex-tinder/tasks": ["libs/tasks/src/index.ts"],
+      "tasks": ["libs/tasks/src/index.ts"]
+    }
   },
   "exclude": ["node_modules", "tmp"]
 }
