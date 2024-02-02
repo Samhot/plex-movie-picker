@@ -1,4 +1,4 @@
-export * from './lib/user/authorization';
+// export * from './lib/user/authorization';
 export * from './lib/user/domain/User';
 export * from './lib/user/domain/ElementaryUser';
 export * from './lib/user/test-utils';

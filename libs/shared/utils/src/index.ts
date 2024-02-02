@@ -1,3 +1,6 @@
+import WinstonLogger from './lib/WinstonLogger/Logger.singleton';
+
+export { WinstonLogger };
 export * from './lib/Errors/AuthorizationError';
 export * from './lib/Errors/RuntimeError';
 export * from './lib/Errors/ValidationError';
@@ -23,3 +26,8 @@ export * from './lib/validators/ZodJson';
 export * from './lib/domain/IUseCase';
 export * from './lib/domain/IResponse';
 export * from './lib/utils/filterNullValues';
+export * from './lib/interfaces/ExecutionContextStorage.interface';
+export * from './lib/interfaces/Logger.interface';
+export * from './lib/constants';
+export * from './lib/WinstonLogger/Logger.singleton';
+export * from './lib/types/policies';

@@ -1,4 +1,4 @@
-import { User } from '@plex-tinder/auth/core';
+// import { User } from '@plex-tinder/auth/core';
 import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
@@ -8,7 +8,10 @@ import { Movie } from '../domain/Movie';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
 import { Logger } from '@nestjs/common';
 
-type Input = { id: string; user: User };
+type Input = {
+  id: string;
+  //  user: User
+};
 type Output = Movie | null;
 export class GetMovieByIdUseCase implements IUseCase<Input, Output> {
   constructor(private readonly movieRepository: IMovieRepository) {}
