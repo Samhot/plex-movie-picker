@@ -27,7 +27,7 @@
       "@plex-tinder/shared/utils": ["libs/shared/utils/src/index.ts"],
       "@plex-tinder/tasks": ["libs/tasks/src/index.ts"],
       "@plex-tinder/utils": ["libs/shared/utils/src/index.ts"],
-      "tasks": ["libs/tasks/src/index.ts"]
+      "@plex-tinder/shared/prisma": ["libs/shared/prisma/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

@@ -3,8 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { MoviesModule, MoviesService } from '@plex-tinder/movies';
 import { TasksService } from '@plex-tinder/tasks';
-import { PrismaModule } from 'libs/prisma/prisma.module';
-import { PrismaService } from 'libs/prisma/prisma.service';
+import { PrismaModule, PrismaService } from '@plex-tinder/shared/prisma';
 
 @Module({
   imports: [MoviesModule, PrismaModule],

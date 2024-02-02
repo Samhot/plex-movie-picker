@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { CreateMovieInput, UpdateMovieInput } from './movie.input';
-import { PrismaService } from '../../../../prisma/prisma.service';
 import { notEmpty } from '@plex-tinder/utils';
+import { PrismaService } from '@plex-tinder/shared/prisma';
 
 @Injectable()
 export class MoviesService {
@@ -65,7 +65,6 @@ export class MoviesService {
   }
 
   async update(guid: string, updateMovieInput: UpdateMovieInput) {
-    const lala = updateMovieInput.tagline;
     const { genres, ...rest } = updateMovieInput;
     const matchedGenres = (
       await Promise.all(genres?.map((genre) => this.findGenre(genre)) ?? [])
