@@ -42,7 +42,9 @@ export class MoviesController {
   @Authorization(FetchMoviesUseCase.authorization)
   @Get('fetch/movies/:category')
   @ApiOkResponse({ status: 200 })
-  fetchMovies(category: MoviesCategory = MoviesCategory.ALL) {
+  fetchMovies(
+    @Param('category') category: MoviesCategory = MoviesCategory.ALL
+  ) {
     return this.moviesService.fetchMovies(category);
   }
 
