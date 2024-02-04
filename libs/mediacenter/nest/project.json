@@ -1,0 +1,19 @@
+{
+  "name": "mediacenter-nest",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/mediacenter/nest/src",
+  "projectType": "library",
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/mediacenter/nest/jest.config.ts"
+      }
+    }
+  },
+  "tags": []
+}

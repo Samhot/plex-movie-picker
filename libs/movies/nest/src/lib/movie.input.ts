@@ -7,13 +7,13 @@ export class CreateMovieInput {
   guid: string;
 
   @ApiProperty()
-  slug: string;
+  slug: string | null;
 
   @ApiProperty()
   year: number;
 
   @ApiProperty()
-  tagline: string;
+  tagline: string | null;
 
   @ApiProperty()
   duration: number;

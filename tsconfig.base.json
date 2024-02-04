@@ -24,21 +24,36 @@
       "@plex-tinder/auth/nest": ["libs/auth/nest/src/index.ts"],
       "@plex-tinder/movies": ["libs/movies/nest/src/index.ts"],
       "@plex-tinder/movies/core": ["libs/movies/core/src/index.ts"],
-      "@plex-tinder/shared/nest": ["libs/shared/nest/src/index.ts"],
-      "@plex-tinder/shared/utils": ["libs/shared/utils/src/index.ts"],
-      "@plex-tinder/tasks": ["libs/tasks/src/index.ts"],
-      "@plex-tinder/utils": ["libs/shared/utils/src/index.ts"],
+      "@plex-tinder/movies/repos/postgres": [
+        "libs/movies/repos/postgres/src/index.ts"
+      ],
+      "@plex-tinder/shared/clients/http": [
+        "libs/shared/clients/http/src/index.ts"
+      ],
       "@plex-tinder/shared/clients/prisma": [
         "libs/shared/clients/prisma/src/index.ts"
       ],
       "@plex-tinder/shared/clients/winston": [
         "libs/shared/clients/winston/src/index.ts"
       ],
-      "@plex-tinder/shared/clients/http": [
-        "libs/shared/clients/http/src/index.ts"
+      "@plex-tinder/shared/nest": ["libs/shared/nest/src/index.ts"],
+      "@plex-tinder/shared/utils": ["libs/shared/utils/src/index.ts"],
+      "@plex-tinder/tasks": ["libs/tasks/src/index.ts"],
+      "@plex-tinder/utils": ["libs/shared/utils/src/index.ts"],
+      "@plex-tinder/mediacenter/core": ["libs/mediacenter/core/src/index.ts"],
+      "@plex-tinder/mediacenter/nest": ["libs/mediacenter/nest/src/index.ts"],
+      "@plex-tinder/mediacenter/repos": ["libs/mediacenter/repos/src/index.ts"],
+      "@plex-tinder/mediacenter/repos/plex": [
+        "libs/mediacenter/repos/plex/src/index.ts"
       ],
-      "@plex-tinder/movies/repos/postgres": [
-        "libs/movies/repos/postgres/src/index.ts"
+      "@plex-tinder/plex": ["libs/plex/src/index.ts"],
+      "@plex-tinder/secret/core": ["libs/secret/core/src/index.ts"],
+      "@plex-tinder/secret/repos": ["libs/secret/repos/src/index.ts"],
+      "@plex-tinder/secret/repos/crypto": [
+        "libs/secret/repos/crypto/src/index.ts"
+      ],
+      "@plex-tinder/secret/repos/prisma": [
+        "libs/secret/repos/prisma/src/index.ts"
       ]
     }
   },

@@ -31,3 +31,4 @@ export * from './lib/interfaces/Logger.interface';
 export * from './lib/constants';
 export * from './lib/WinstonLogger/Logger.singleton';
 export * from './lib/types/policies';
+export * from './lib/Errors/CheckError';

@@ -1,12 +1,18 @@
 import { Injectable } from '@nestjs/common';
 // import { User } from '@plex-tinder/auth/core';
-import { GetMovieByIdUseCase } from '@plex-tinder/movies/core';
+import {
+  FetchMoviesUseCase,
+  GetAllMoviesUseCase,
+  GetMovieByIdUseCase,
+} from '@plex-tinder/movies/core';
 
 @Injectable()
 export class MoviesService {
   constructor(
     // private readonly prisma: PrismaService,
-    private readonly getMovieByIdUseCase: GetMovieByIdUseCase
+    private readonly getMovieByIdUseCase: GetMovieByIdUseCase,
+    private readonly getAllMoviesUseCase: GetAllMoviesUseCase,
+    private readonly fetchMoviesUseCase: FetchMoviesUseCase
   ) {}
 
   // async create(createMovieDto: CreateMovieInput) {
@@ -58,9 +64,12 @@ export class MoviesService {
   //   return await this.upsertGenre(genreName);
   // }
 
-  // findAll() {
-  //   return this.prisma.movie.findMany({ take: 60 });
-  // }
+  async findAll(count = 10) {
+    return await this.getAllMoviesUseCase.execute({
+      // , user
+      count,
+    });
+  }
 
   async getMovie(
     id: string
@@ -70,6 +79,10 @@ export class MoviesService {
       id,
       // , user
     });
+  }
+
+  async fetchMovies() {
+    return await this.fetchMoviesUseCase.execute({});
   }
 
   // async update(guid: string, updateMovieInput: UpdateMovieInput) {

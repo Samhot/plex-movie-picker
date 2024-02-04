@@ -7,5 +7,7 @@ export const prismaMovieToDomainMapper = (
   return {
     ...movie,
     summary: movie.summary ?? undefined,
+    slug: movie.slug ?? undefined,
+    tagline: movie.tagline ?? undefined,
   };
 };

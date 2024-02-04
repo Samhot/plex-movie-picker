@@ -15,7 +15,7 @@ import {
   createRegulatoryObligations,
   createTemporaryReports,
 } from '@beeldi-app/shared/prisma-seed';
-import { prismaTemporaryRegulatoryReportToDomainMapper } from './prismaRegulatoryReportToDomainMapper';
+import { prismaTemporaryRegulatoryReportToDomainMapper } from './prismaMovieToDomainMapper';
 import { RegulatoryReportStatus } from '@prisma/client';
 import { PrismaBuildingRepository } from '@beeldi-app/assets/repos/prisma';
 import { FirebaseBuildingRepository } from '@beeldi-app/assets/repos/firebase';

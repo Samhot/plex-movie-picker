@@ -38,6 +38,9 @@ dependencies:
   axios:
     specifier: ^1.0.0
     version: 1.6.7
+  cache-manager:
+    specifier: ^5.4.0
+    version: 5.4.0
   cache-manager-redis-store:
     specifier: ^3.0.1
     version: 3.0.1

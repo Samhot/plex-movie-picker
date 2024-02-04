@@ -11,7 +11,7 @@ datasource db {
 }
 
 model Genre {
-  id     String  @id @default(cuid())
+  id     Int     @id @unique
   name   String
   movies Movie[]
 }
@@ -20,13 +20,13 @@ model Movie {
   id             String  @id @default(cuid())
   title          String
   guid           String  @unique
-  slug           String  @unique
+  slug           String?
   year           Int
-  tagline        String
+  tagline        String?
   duration       Int
   audienceRating Float
   summary        String?
-  thumb          String
+  poster         String
   genres         Genre[]
   swipes         Swipe[]
   matches        Match[]
@@ -69,4 +69,19 @@ model Match {
   movieId   String
   movie     Movie    @relation(fields: [movieId], references: [id])
   createdAt DateTime @default(now())
+}
+
+model ClientSecret {
+  id             String      @id @default(cuid())
+  secret         String
+  mediacenter    MediaCenter
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  plexUrl        String
+  plexToken      String
+  movieSectionId Int
+}
+
+enum MediaCenter {
+  PLEX
 }

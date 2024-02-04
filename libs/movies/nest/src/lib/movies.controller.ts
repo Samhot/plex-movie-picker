@@ -1,6 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
-import { GetMovieByIdUseCase } from '@plex-tinder/movies/core';
+import {
+  FetchMoviesUseCase,
+  GetAllMoviesUseCase,
+  GetMovieByIdUseCase,
+} from '@plex-tinder/movies/core';
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
@@ -19,11 +23,19 @@ export class MoviesController {
   //   return this.moviesService.create(createMovieDto);
   // }
 
-  // @Get()
-  // @ApiOkResponse({ type: Movie, isArray: true })
-  // findAll() {
-  //   return this.moviesService.findAll();
-  // }
+  @Authorization(GetAllMoviesUseCase.authorization)
+  @Get()
+  @ApiOkResponse({ type: Movie, isArray: true })
+  findAll() {
+    return this.moviesService.findAll();
+  }
+
+  @Authorization(FetchMoviesUseCase.authorization)
+  @Get('fetch')
+  @ApiOkResponse({ status: 200 })
+  fetchMovies() {
+    return this.moviesService.fetchMovies();
+  }
 
   @Authorization(GetMovieByIdUseCase.authorization)
   @Get(':guid')

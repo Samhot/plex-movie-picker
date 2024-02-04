@@ -3,35 +3,35 @@ import { Movie as PrismaMovie } from '@prisma/client';
 
 export class Movie implements PrismaMovie {
   @ApiProperty()
-  id!: string;
+  id: string;
 
   @ApiProperty()
-  title!: string;
+  title: string;
 
   @ApiProperty()
-  guid!: string;
+  guid: string;
 
   @ApiProperty()
-  slug!: string;
+  slug: string | null;
 
   @ApiProperty()
-  year!: number;
+  year: number;
 
   @ApiProperty()
-  tagline!: string;
+  tagline: string | null;
 
   @ApiProperty()
-  duration!: number;
+  duration: number;
 
   @ApiProperty()
-  audienceRating!: number;
+  audienceRating: number;
 
   @ApiProperty({ required: false, nullable: true })
-  summary!: string | null;
+  summary: string | null;
 
   @ApiProperty()
-  thumb!: string;
+  poster: string;
 
   @ApiProperty()
-  genres!: string[];
+  genres: string[];
 }
