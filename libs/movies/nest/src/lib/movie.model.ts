@@ -34,4 +34,7 @@ export class Movie implements PrismaMovie {
 
   @ApiProperty()
   genres: string[];
+
+  @ApiProperty()
+  viewCount: number;
 }

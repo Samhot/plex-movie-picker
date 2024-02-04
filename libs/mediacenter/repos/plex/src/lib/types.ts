@@ -50,7 +50,7 @@ export type PlexMovie = {
   Writer: PlexWriter[];
   Role: PlexRole[];
   titleSort: string;
-  viewCount: number;
+  viewCount?: number;
   lastViewedAt: number;
   originalTitle: string;
   viewOffset: number;

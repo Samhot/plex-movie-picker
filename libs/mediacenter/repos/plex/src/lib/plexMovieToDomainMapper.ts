@@ -17,6 +17,7 @@ export const plexMovieToDomainMapper = (
     tagline: String(movie.tagline),
     duration: Number(movie.duration),
     audienceRating: movie.audienceRating ? Number(movie.audienceRating) : 0,
+    viewCount: movie.viewCount ? Number(movie.viewCount) : 0,
   } satisfies MediaCenterMovie;
 };
 

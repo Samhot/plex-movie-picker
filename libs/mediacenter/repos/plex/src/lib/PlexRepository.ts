@@ -39,7 +39,7 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   async getMovies(
     category: MoviesCategory
   ): Promise<MediaCenterMovie[] | null> {
-    const clientInfos = await this.getClientInfos('cls7i5g0a0002ijfab8fzxvhr');
+    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
 
     if (!clientInfos) return null;
     const { plexUrl, plexToken, movieSectionId } = clientInfos;
@@ -62,7 +62,7 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   }
 
   async getAllGenres(): Promise<MediaCenterGenre[] | null> {
-    const clientInfos = await this.getClientInfos('cls7i5g0a0002ijfab8fzxvhr');
+    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
 
     if (!clientInfos) return null;
     const { plexUrl, plexToken, movieSectionId } = clientInfos;

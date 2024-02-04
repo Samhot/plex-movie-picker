@@ -81,6 +81,4 @@ export class PostgresMovieRepository implements IMovieRepository {
 
     return savedMovies.map(prismaMovieToDomainMapper);
   }
-
-  findOrCreateGenre: (genreName: string) => Promise<{ id: number }>;
 }
