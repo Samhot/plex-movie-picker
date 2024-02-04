@@ -40,7 +40,7 @@ export class FetchGenresUseCase implements IUseCase<Input, Output> {
   public async execute(input: Input) {
     await this.authorize(input);
 
-    const genres = await this.mediaCenterRepo.getAllGenres('plex');
+    const genres = await this.mediaCenterRepo.getAllGenres();
 
     if (genres) {
       const createdGenres = await this.movieRepository.createManyGenres(

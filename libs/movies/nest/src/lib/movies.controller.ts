@@ -9,6 +9,7 @@ import {
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
+import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 // import { User } from '@plex-tinder/auth/core';
 
 // @UseGuards(AuthorizationGuard)
@@ -39,10 +40,10 @@ export class MoviesController {
   }
 
   @Authorization(FetchMoviesUseCase.authorization)
-  @Get('fetch/movies')
+  @Get('fetch/movies/:category')
   @ApiOkResponse({ status: 200 })
-  fetchMovies() {
-    return this.moviesService.fetchMovies();
+  fetchMovies(category: MoviesCategory = MoviesCategory.ALL) {
+    return this.moviesService.fetchMovies(category);
   }
 
   @Authorization(GetMovieByIdUseCase.authorization)

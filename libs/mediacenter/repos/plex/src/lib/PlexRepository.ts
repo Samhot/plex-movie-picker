@@ -9,7 +9,7 @@ import {
 } from '@plex-tinder/mediacenter/core';
 import { PrismaClientSecretRepository } from '@plex-tinder/secret/repos/prisma';
 import { plexMovieToDomainMapper } from './plexMovieToDomainMapper';
-import { PlexGenreRequest, PlexLibrary } from './types';
+import { MoviesCategory, PlexGenreRequest, PlexLibrary } from './types';
 import { plexGenreToDomainMapper } from './plexGenreToDomainMapper';
 
 export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
@@ -36,13 +36,15 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     };
   }
 
-  async getAllMovies(): Promise<MediaCenterMovie[] | null> {
+  async getMovies(
+    category: MoviesCategory
+  ): Promise<MediaCenterMovie[] | null> {
     const clientInfos = await this.getClientInfos('cls7i5g0a0002ijfab8fzxvhr');
 
     if (!clientInfos) return null;
     const { plexUrl, plexToken, movieSectionId } = clientInfos;
 
-    const url = `${plexUrl}/library/sections/${movieSectionId}/all`;
+    const url = `${plexUrl}/library/sections/${movieSectionId}/${category}`;
 
     const params = {
       headers: {

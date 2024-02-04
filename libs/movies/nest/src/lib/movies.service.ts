@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 // import { User } from '@plex-tinder/auth/core';
 import {
   FetchGenresUseCase,
@@ -83,8 +84,8 @@ export class MoviesService {
     });
   }
 
-  async fetchMovies() {
-    return await this.fetchMoviesUseCase.execute({});
+  async fetchMovies(category: MoviesCategory) {
+    return await this.fetchMoviesUseCase.execute({ category: category });
   }
 
   async fetchGenres() {

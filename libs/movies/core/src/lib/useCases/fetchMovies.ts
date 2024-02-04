@@ -12,9 +12,10 @@ import {
 import { HttpStatusCode } from 'axios';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
 import { FetchGenresUseCase } from './fetchGenres';
+import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 
 type Input = {
-  //
+  category: MoviesCategory;
 };
 type Output = {
   status: HttpStatusCode;
@@ -44,14 +45,18 @@ export class FetchMoviesUseCase implements IUseCase<Input, Output> {
 
     await this.fetchGenresUseCase.execute({});
 
-    const movies = await this.mediaCenterRepo.getAllMovies('plex');
+    const movies = await this.mediaCenterRepo.getMovies(input.category);
 
     if (movies) {
       const saved = await this.movieRepository.createManyMovies(movies);
       return {
         success: {
           status: HttpStatusCode.Created,
-          savedCount: saved ? saved.length : 0,
+          savedCount: saved
+            ? movies.filter(
+                (movie) => !saved.map((s) => s.guid).includes(movie.guid)
+              ).length
+            : 0,
           foundCount: movies ? movies.length : 0,
         },
         error: null,
