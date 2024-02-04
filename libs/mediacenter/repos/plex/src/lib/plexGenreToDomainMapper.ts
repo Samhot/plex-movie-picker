@@ -5,7 +5,7 @@ export const plexGenreToDomainMapper = (
   genre: PlexGenreDirectory
 ): MediaCenterGenre => {
   return {
-    id: genre.key,
+    id: Number(genre.key),
     name: genre.title,
   };
 };

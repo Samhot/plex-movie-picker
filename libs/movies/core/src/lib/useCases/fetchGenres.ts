@@ -11,7 +11,6 @@ import {
 } from '@plex-tinder/mediacenter/core';
 import { HttpStatusCode } from 'axios';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
-import { FetchGenresUseCase } from './fetchGenres';
 
 type Input = {
   //
@@ -21,11 +20,10 @@ type Output = {
   savedCount: number;
   foundCount: number;
 };
-export class FetchMoviesUseCase implements IUseCase<Input, Output> {
+export class FetchGenresUseCase implements IUseCase<Input, Output> {
   constructor(
     private readonly mediaCenterRepo: IMediaCenterRepository<IMediaCenterCredentials>,
-    private readonly movieRepository: IMovieRepository,
-    private readonly fetchGenresUseCase: FetchGenresUseCase
+    private readonly movieRepository: IMovieRepository
   ) {}
 
   static authorization = {
@@ -42,22 +40,27 @@ export class FetchMoviesUseCase implements IUseCase<Input, Output> {
   public async execute(input: Input) {
     await this.authorize(input);
 
-    await this.fetchGenresUseCase.execute({});
+    const genres = await this.mediaCenterRepo.getAllGenres('plex');
 
-    const movies = await this.mediaCenterRepo.getAllMovies('plex');
+    if (genres) {
+      const createdGenres = await this.movieRepository.createManyGenres(
+        genres.map((genre) => ({
+          ...genre,
+          id: Number(genre.id),
+        }))
+      );
+      Logger.log('Created new genres', createdGenres);
 
-    if (movies) {
-      const saved = await this.movieRepository.createManyMovies(movies);
       return {
         success: {
           status: HttpStatusCode.Created,
-          savedCount: saved ? saved.length : 0,
-          foundCount: movies ? movies.length : 0,
+          savedCount: genres.filter((x) => createdGenres.includes({ id: x.id }))
+            .length,
+          foundCount: genres ? genres.length : 0,
         },
         error: null,
       };
     }
-
     return {
       success: null,
       error: Error('Invalid credentals'),

@@ -1,6 +1,7 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import {
+  FetchGenresUseCase,
   FetchMoviesUseCase,
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
@@ -30,8 +31,15 @@ export class MoviesController {
     return this.moviesService.findAll();
   }
 
+  @Authorization(FetchGenresUseCase.authorization)
+  @Get('fetch/genres')
+  @ApiOkResponse({ status: 200 })
+  fetchGenres() {
+    return this.moviesService.fetchGenres();
+  }
+
   @Authorization(FetchMoviesUseCase.authorization)
-  @Get('fetch')
+  @Get('fetch/movies')
   @ApiOkResponse({ status: 200 })
   fetchMovies() {
     return this.moviesService.fetchMovies();

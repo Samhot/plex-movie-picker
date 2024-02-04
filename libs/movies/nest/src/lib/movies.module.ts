@@ -5,6 +5,7 @@ import {
 } from '@plex-tinder/mediacenter/core';
 import { PlexRepository } from '@plex-tinder/mediacenter/repos/plex';
 import {
+  FetchGenresUseCase,
   FetchMoviesUseCase,
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
@@ -38,34 +39,51 @@ import { MoviesService } from './movies.service';
       inject: [PostgresMovieRepository],
     },
     {
-      provide: FetchMoviesUseCase,
+      provide: FetchGenresUseCase,
       useFactory: (
         mediaCenterRepo: IMediaCenterRepository<IMediaCenterCredentials>,
         movieRepo: IMovieRepository
       ) => {
-        return new FetchMoviesUseCase(mediaCenterRepo, movieRepo);
+        return new FetchGenresUseCase(mediaCenterRepo, movieRepo);
       },
-      inject: [
-        PlexRepository,
-        PostgresMovieRepository,
-        PrismaClientSecretRepository,
-        HttpClient,
-      ],
+      inject: [PlexRepository, PostgresMovieRepository],
+    },
+    {
+      provide: FetchMoviesUseCase,
+      useFactory: (
+        mediaCenterRepo: IMediaCenterRepository<IMediaCenterCredentials>,
+        movieRepo: IMovieRepository,
+        fetchGenresUseCase: FetchGenresUseCase
+      ) => {
+        return new FetchMoviesUseCase(
+          mediaCenterRepo,
+          movieRepo,
+          fetchGenresUseCase
+        );
+      },
+      inject: [PlexRepository, PostgresMovieRepository, FetchGenresUseCase],
     },
     {
       provide: MoviesService,
       useFactory: (
         getMovieByIdUseCase: GetMovieByIdUseCase,
         getAllMoviesUseCase: GetAllMoviesUseCase,
-        fetchMoviesUseCase: FetchMoviesUseCase
+        fetchMoviesUseCase: FetchMoviesUseCase,
+        fetchGenresUseCase: FetchGenresUseCase
       ) => {
         return new MoviesService(
           getMovieByIdUseCase,
           getAllMoviesUseCase,
-          fetchMoviesUseCase
+          fetchMoviesUseCase,
+          fetchGenresUseCase
         );
       },
-      inject: [GetMovieByIdUseCase, GetAllMoviesUseCase, FetchMoviesUseCase],
+      inject: [
+        GetMovieByIdUseCase,
+        GetAllMoviesUseCase,
+        FetchMoviesUseCase,
+        FetchGenresUseCase,
+      ],
     },
     {
       provide: PostgresMovieRepository,
