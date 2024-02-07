@@ -6,6 +6,8 @@ import {
   FetchMoviesUseCase,
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
+  GetMoviesFromCriteriasUseCase,
+  SearchCriteria,
 } from '@plex-tinder/movies/core';
 
 @Injectable()
@@ -14,6 +16,7 @@ export class MoviesService {
     // private readonly prisma: PrismaService,
     private readonly getMovieByIdUseCase: GetMovieByIdUseCase,
     private readonly getAllMoviesUseCase: GetAllMoviesUseCase,
+    private readonly getMoviesFromCriteriasUseCase: GetMoviesFromCriteriasUseCase,
     private readonly fetchMoviesUseCase: FetchMoviesUseCase,
     private readonly fetchGenresUseCase: FetchGenresUseCase
   ) {}
@@ -70,6 +73,26 @@ export class MoviesService {
   async findAll(count = 10) {
     return await this.getAllMoviesUseCase.execute({
       // , user
+      count,
+    });
+  }
+
+  async getMoviesFromCriterias(
+    count = 10,
+    watched?: boolean,
+    duration?: number,
+    audienceRating?: number,
+    maxAge?: number
+  ) {
+    const criterias: SearchCriteria = {
+      watched: watched === undefined ? undefined : watched,
+      duration: duration ? Number(duration) : undefined,
+      audienceRating: audienceRating ? Number(audienceRating) : undefined,
+      maxAge: maxAge ? Number(maxAge) : undefined,
+    };
+
+    return await this.getMoviesFromCriteriasUseCase.execute({
+      criterias,
       count,
     });
   }

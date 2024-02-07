@@ -5,3 +5,4 @@ export * from './lib/domain/Movie';
 export * from './lib/useCases/getAllMovies';
 export * from './lib/useCases/fetchMovies';
 export * from './lib/useCases/fetchGenres';
+export * from './lib/useCases/getMoviesFromCriterias';

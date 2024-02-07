@@ -1,15 +1,16 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 import {
   FetchGenresUseCase,
   FetchMoviesUseCase,
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
+  GetMoviesFromCriteriasUseCase,
 } from '@plex-tinder/movies/core';
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 // import { User } from '@plex-tinder/auth/core';
 
 // @UseGuards(AuthorizationGuard)
@@ -30,6 +31,25 @@ export class MoviesController {
   @ApiOkResponse({ type: Movie, isArray: true })
   findAll() {
     return this.moviesService.findAll();
+  }
+
+  @Authorization(GetMoviesFromCriteriasUseCase.authorization)
+  @Get('search')
+  @ApiOkResponse({ type: Movie, isArray: true })
+  findFromCriterias(
+    @Query('count') count?: number,
+    @Query('watched') watched?: boolean,
+    @Query('duration') duration?: number,
+    @Query('audienceRating') audienceRating?: number,
+    @Query('maxAge') maxAge?: number
+  ) {
+    return this.moviesService.getMoviesFromCriterias(
+      count,
+      watched,
+      duration,
+      audienceRating,
+      maxAge
+    );
   }
 
   @Authorization(FetchGenresUseCase.authorization)

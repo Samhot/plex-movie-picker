@@ -4,7 +4,11 @@ import {
   MediaCenterGenre,
   MediaCenterMovie,
 } from '@plex-tinder/mediacenter/core';
-import { IMovieRepository, Movie } from '@plex-tinder/movies/core';
+import {
+  IMovieRepository,
+  Movie,
+  SearchCriteria,
+} from '@plex-tinder/movies/core';
 import { notEmpty } from '@plex-tinder/shared/utils';
 import { prismaMovieToDomainMapper } from './prismaMovieToDomainMapper';
 
@@ -26,6 +30,33 @@ export class PostgresMovieRepository implements IMovieRepository {
     });
 
     return movie ? prismaMovieToDomainMapper(movie) : null;
+  }
+
+  async getMoviesFromCriterias(
+    criterias?: SearchCriteria,
+    count?: number
+  ): Promise<Movie[] | null> {
+    const movies = await this.prisma.movie.findMany({
+      include: { genres: true },
+      where: {
+        viewCount:
+          criterias?.watched === true
+            ? { gt: 0 }
+            : criterias?.watched === false
+            ? { equals: 0 }
+            : undefined,
+        duration: criterias?.duration ?? undefined,
+        year: criterias?.maxAge
+          ? { gte: new Date().getFullYear() - criterias.maxAge }
+          : undefined,
+        audienceRating: criterias?.audienceRating
+          ? { gte: criterias.audienceRating }
+          : undefined,
+      },
+      take: count === 0 ? undefined : count,
+    });
+
+    return movies ? movies.map(prismaMovieToDomainMapper) : null;
   }
 
   private async findGenre(genreName: string): Promise<Genre | null> {

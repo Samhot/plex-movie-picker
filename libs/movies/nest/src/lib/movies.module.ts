@@ -9,6 +9,7 @@ import {
   FetchMoviesUseCase,
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
+  GetMoviesFromCriteriasUseCase,
   IMovieRepository,
 } from '@plex-tinder/movies/core';
 import { PostgresMovieRepository } from '@plex-tinder/movies/repos/postgres';
@@ -35,6 +36,13 @@ import { MoviesService } from './movies.service';
       provide: GetAllMoviesUseCase,
       useFactory: (movieRepo: IMovieRepository) => {
         return new GetAllMoviesUseCase(movieRepo);
+      },
+      inject: [PostgresMovieRepository],
+    },
+    {
+      provide: GetMoviesFromCriteriasUseCase,
+      useFactory: (movieRepo: IMovieRepository) => {
+        return new GetMoviesFromCriteriasUseCase(movieRepo);
       },
       inject: [PostgresMovieRepository],
     },
@@ -68,12 +76,14 @@ import { MoviesService } from './movies.service';
       useFactory: (
         getMovieByIdUseCase: GetMovieByIdUseCase,
         getAllMoviesUseCase: GetAllMoviesUseCase,
+        getMoviesFromCriteriasUseCase: GetMoviesFromCriteriasUseCase,
         fetchMoviesUseCase: FetchMoviesUseCase,
         fetchGenresUseCase: FetchGenresUseCase
       ) => {
         return new MoviesService(
           getMovieByIdUseCase,
           getAllMoviesUseCase,
+          getMoviesFromCriteriasUseCase,
           fetchMoviesUseCase,
           fetchGenresUseCase
         );
@@ -81,6 +91,7 @@ import { MoviesService } from './movies.service';
       inject: [
         GetMovieByIdUseCase,
         GetAllMoviesUseCase,
+        GetMoviesFromCriteriasUseCase,
         FetchMoviesUseCase,
         FetchGenresUseCase,
       ],
