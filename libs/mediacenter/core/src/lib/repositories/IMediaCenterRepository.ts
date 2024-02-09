@@ -2,6 +2,7 @@ import { CheckError } from '@plex-tinder/shared/utils';
 import { IMediaCenterCredentials } from '../domain/IMediaCenterCredentials.interface';
 import { MediaCenterGenre, MediaCenterMovie } from '../domain/MediaCenterMovie';
 import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
+import { MediaCenterLibrary } from '../domain/MediaCenterLibrary';
 
 export type MediaCenterCheckError = CheckError<'invalid_credentials'>;
 
@@ -11,4 +12,5 @@ export interface IMediaCenterRepository<T extends IMediaCenterCredentials> {
 
   getMovies: (category: MoviesCategory) => Promise<MediaCenterMovie[] | null>;
   getAllGenres: () => Promise<MediaCenterGenre[] | null>;
+  getLibraries: () => Promise<MediaCenterLibrary[] | null>;
 }

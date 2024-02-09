@@ -6,3 +6,4 @@ export * from './lib/useCases/getAllMovies';
 export * from './lib/useCases/fetchMovies';
 export * from './lib/useCases/fetchGenres';
 export * from './lib/useCases/getMoviesFromCriterias';
+export * from './lib/useCases/syncLibraries';

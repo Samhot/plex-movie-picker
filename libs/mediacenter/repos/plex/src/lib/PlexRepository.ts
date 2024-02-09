@@ -4,13 +4,20 @@ import {
   IMediaCenterRepository,
   MediaCenterCheckError,
   MediaCenterGenre,
+  MediaCenterLibrary,
   MediaCenterMovie,
   PlexCredentials,
 } from '@plex-tinder/mediacenter/core';
 import { PrismaClientSecretRepository } from '@plex-tinder/secret/repos/prisma';
-import { plexMovieToDomainMapper } from './plexMovieToDomainMapper';
-import { MoviesCategory, PlexGenreRequest, PlexLibrary } from './types';
 import { plexGenreToDomainMapper } from './plexGenreToDomainMapper';
+import { plexMovieToDomainMapper } from './plexMovieToDomainMapper';
+import {
+  MoviesCategory,
+  PlexGenreRequest,
+  PlexLibraries,
+  PlexLibrary,
+} from './types';
+import { LibraryType } from '@prisma/client';
 
 export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   constructor(
@@ -46,12 +53,23 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
 
     const url = `${plexUrl}/library/sections/${movieSectionId}/${category}`;
 
-    const params = {
+    type Params = {
+      headers: {
+        'X-Plex-Token': string;
+        Accept: string;
+        'X-Plex-Container-Size'?: string;
+      };
+    };
+
+    const params: Params = {
       headers: {
         'X-Plex-Token': plexToken,
         Accept: 'application/json',
       },
     };
+    if (category === 'recentlyAdded') {
+      params.headers['X-Plex-Container-Size'] = '10';
+    }
 
     const response = await this.http.get<string>(`${url}`, params);
     const data: PlexLibrary = JSON.parse(response.data);
@@ -81,5 +99,28 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     return data.MediaContainer.Directory.map((genre) =>
       plexGenreToDomainMapper(genre)
     );
+  }
+
+  async getLibraries(): Promise<MediaCenterLibrary[] | null> {
+    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
+    if (!clientInfos) return null;
+    const params = {
+      headers: {
+        'X-Plex-Token': clientInfos?.plexToken,
+        Accept: 'application/json',
+      },
+    };
+    const response = await this.http.get<PlexLibraries>(
+      '/library/sections',
+      params
+    );
+
+    return response.data.MediaContainer.Directory.map((library) => ({
+      id: library.key,
+      guid: library.uuid,
+      type: library.type === 'movie' ? LibraryType.MOVIE : LibraryType.TV_SHOW,
+      title: library.title,
+      key: library.key,
+    }));
   }
 }

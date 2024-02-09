@@ -17,9 +17,9 @@ model Genre {
 }
 
 model Movie {
-  id             String  @id @default(cuid())
+  id             String    @id @default(cuid())
   title          String
-  guid           String  @unique
+  guid           String    @unique
   slug           String?
   year           Int
   tagline        String?
@@ -30,15 +30,28 @@ model Movie {
   genres         Genre[]
   swipes         Swipe[]
   matches        Match[]
-  viewCount      Int     @default(0)
+  libraries      Library[]
+  viewCount      Int       @default(0)
+}
+
+model Library {
+  id     String      @id @default(cuid())
+  uuid   String      @unique
+  userId String
+  user   User        @relation(fields: [userId], references: [id])
+  title  String
+  type   LibraryType
+  key    String
+  movies Movie[]
 }
 
 model User {
-  id       String    @id @default(cuid())
-  name     String
-  sessions Session[]
-  swipes   Swipe[]
-  matches  Match[]
+  id        String    @id @default(cuid())
+  name      String
+  libraries Library[]
+  sessions  Session[]
+  swipes    Swipe[]
+  matches   Match[]
 }
 
 model Session {
@@ -85,4 +98,9 @@ model ClientSecret {
 
 enum MediaCenter {
   PLEX
+}
+
+enum LibraryType {
+  MOVIE
+  TV_SHOW
 }

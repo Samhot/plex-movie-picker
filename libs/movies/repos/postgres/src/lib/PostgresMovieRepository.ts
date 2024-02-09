@@ -2,6 +2,7 @@ import { Genre, PrismaClient } from '@prisma/client';
 
 import {
   MediaCenterGenre,
+  MediaCenterLibrary,
   MediaCenterMovie,
 } from '@plex-tinder/mediacenter/core';
 import {
@@ -111,5 +112,36 @@ export class PostgresMovieRepository implements IMovieRepository {
     );
 
     return savedMovies.map(prismaMovieToDomainMapper);
+  }
+
+  async getLibraries(userId: string): Promise<MediaCenterLibrary[]> {
+    const libraries = await this.prisma.library.findMany({
+      where: { userId },
+    });
+
+    return libraries.map((library) => ({
+      id: library.id,
+      guid: library.uuid,
+      type: library.type,
+      title: library.title,
+      key: library.key,
+    }));
+  }
+
+  async createManyLibraries(
+    libraries: MediaCenterLibrary[]
+  ): Promise<MediaCenterLibrary[]> {
+    const savedLibraries = await Promise.all(
+      libraries.map(async (library) => {
+        return await this.prisma.library.upsert({
+          where: {
+            id: library.id,
+          },
+          create: library,
+          update: library,
+        });
+      })
+    );
+    return [];
   }
 }

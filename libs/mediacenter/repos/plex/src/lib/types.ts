@@ -158,3 +158,41 @@ export enum MoviesCategory {
   NEWEST = 'newest',
   UNWATCHED = 'unwatched',
 }
+
+export type PlexLibraries = {
+  MediaContainer: {
+    size: number;
+    allowSync: boolean;
+    title1: string;
+    Directory: PlexLibraryDirectory[];
+  };
+};
+
+export type PlexLibraryDirectory = {
+  allowSync: boolean;
+  art: string;
+  composite: string;
+  filters: boolean;
+  refreshing: boolean;
+  thumb: string;
+  key: string;
+  type: string;
+  title: string;
+  agent: string;
+  scanner: string;
+  language: string;
+  uuid: string;
+  updatedAt: number;
+  createdAt: number;
+  scannedAt: number;
+  content: boolean;
+  directory: boolean;
+  contentChangedAt: number;
+  hidden: number;
+  Location: PlexLibraryLocation[];
+};
+
+export type PlexLibraryLocation = {
+  id: number;
+  path: string;
+};
