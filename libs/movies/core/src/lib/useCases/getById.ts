@@ -29,7 +29,7 @@ export class GetMovieByIdUseCase implements IUseCase<Input, Output> {
 
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
-    const movie = await this.movieRepository.getOne(input.id);
+    const movie = await this.movieRepository.getOneMovie(input.id);
 
     await this.authorize(input);
 

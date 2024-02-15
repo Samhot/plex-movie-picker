@@ -36,7 +36,7 @@ model Movie {
 
 model Library {
   id     String      @id @default(cuid())
-  uuid   String      @unique
+  guid   String      @unique
   userId String
   user   User        @relation(fields: [userId], references: [id])
   title  String

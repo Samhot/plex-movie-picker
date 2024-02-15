@@ -43,16 +43,19 @@ export class SyncLibrariesUseCase implements IUseCase<Input, Output> {
     const mediaCenterLibraries = await this.mediaCenterRepo.getLibraries();
 
     if (mediaCenterLibraries) {
-      const saved = await this.movieRepository.getLibraries(movies);
+      const saved = await this.movieRepository.createManyLibraries(
+        input.userId,
+        mediaCenterLibraries
+      );
       return {
         success: {
           status: HttpStatusCode.Created,
           savedCount: saved
-            ? movies.filter(
-                (movie) => !saved.map((s) => s.guid).includes(movie.guid)
+            ? mediaCenterLibraries.filter(
+                (lib) => !saved.map((s) => s.guid).includes(lib.guid)
               ).length
             : 0,
-          foundCount: movies ? movies.length : 0,
+          foundCount: mediaCenterLibraries ? mediaCenterLibraries.length : 0,
         },
         error: null,
       };

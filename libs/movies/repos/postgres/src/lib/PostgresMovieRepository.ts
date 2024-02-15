@@ -1,4 +1,4 @@
-import { Genre, PrismaClient } from '@prisma/client';
+import { Genre, PrismaClient, Library as PrismaLibrary } from '@prisma/client';
 
 import {
   MediaCenterGenre,
@@ -9,13 +9,15 @@ import {
   IMovieRepository,
   Movie,
   SearchCriteria,
+  Library,
 } from '@plex-tinder/movies/core';
 import { notEmpty } from '@plex-tinder/shared/utils';
 import { prismaMovieToDomainMapper } from './prismaMovieToDomainMapper';
+import { prismaLibraryToDomainMapper } from './prismaLibraryToDomainMapper';
 
 export class PostgresMovieRepository implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
-  async getAll(count: number): Promise<Movie[] | null> {
+  async getAllMovies(count: number): Promise<Movie[] | null> {
     const movies = await this.prisma.movie.findMany({
       include: { genres: true },
       take: count,
@@ -24,7 +26,7 @@ export class PostgresMovieRepository implements IMovieRepository {
     return movies ? movies.map(prismaMovieToDomainMapper) : null;
   }
 
-  async getOne(guid: string): Promise<Movie | null> {
+  async getOneMovie(guid: string): Promise<Movie | null> {
     const movie = await this.prisma.movie.findUnique({
       where: { guid },
       include: { genres: true },
@@ -114,34 +116,31 @@ export class PostgresMovieRepository implements IMovieRepository {
     return savedMovies.map(prismaMovieToDomainMapper);
   }
 
-  async getLibraries(userId: string): Promise<MediaCenterLibrary[]> {
+  async getLibraries(userId: string): Promise<Library[] | null> {
     const libraries = await this.prisma.library.findMany({
       where: { userId },
+      include: { movies: { include: { genres: true } } },
     });
 
-    return libraries.map((library) => ({
-      id: library.id,
-      guid: library.uuid,
-      type: library.type,
-      title: library.title,
-      key: library.key,
-    }));
+    return libraries ? libraries.map(prismaLibraryToDomainMapper) : null;
   }
 
   async createManyLibraries(
+    userId: string,
     libraries: MediaCenterLibrary[]
-  ): Promise<MediaCenterLibrary[]> {
+  ): Promise<Library[] | null> {
     const savedLibraries = await Promise.all(
       libraries.map(async (library) => {
         return await this.prisma.library.upsert({
           where: {
-            id: library.id,
+            guid: library.guid,
           },
-          create: library,
-          update: library,
+          include: { movies: { include: { genres: true } } },
+          create: { ...library, userId },
+          update: { ...library, userId },
         });
       })
     );
-    return [];
+    return savedLibraries.map(prismaLibraryToDomainMapper);
   }
 }

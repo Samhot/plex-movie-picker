@@ -276,7 +276,7 @@ describe('PostgresRegulatoryrepository', () => {
         });
 
         // Assert
-        const coreReport = (await repository.getOne(createdReport.id))!;
+        const coreReport = (await repository.getOneMovie(createdReport.id))!;
         const coreValidUntil = computeRegulatoryReportValidUntil({
           ...coreReport,
           obligations: [coreReport.obligations[0]],
@@ -329,7 +329,7 @@ describe('PostgresRegulatoryrepository', () => {
 
       // Assert
       const coreValidUntil = computeRegulatoryReportValidUntil(
-        (await repository.getOne(createdReport.id))!
+        (await repository.getOneMovie(createdReport.id))!
       );
 
       expect(report?.validUntil?.validUntil).toEqual(coreValidUntil);

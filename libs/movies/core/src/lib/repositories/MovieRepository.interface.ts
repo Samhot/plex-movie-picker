@@ -5,16 +5,20 @@ import {
 } from '@plex-tinder/mediacenter/core';
 import { SearchCriteria } from '../constants';
 import { Movie } from '../domain/Movie';
+import { Library } from '../domain/Library';
 
 export interface IMovieRepository {
-  getOne: (id: string) => Promise<Movie | null>;
-  getAll: (count: number) => Promise<Movie[] | null>;
+  getOneMovie: (id: string) => Promise<Movie | null>;
+  getAllMovies: (count: number) => Promise<Movie[] | null>;
   getMoviesFromCriterias: (
     criterias?: SearchCriteria,
     count?: number
   ) => Promise<Movie[] | null>;
-  getLibraries: (userId: string) => Promise<MediaCenterLibrary[]>;
-  createManyLibraries: (libraries: MediaCenterLibrary[]) => Promise<Library[]>;
+  getLibraries: (userId: string) => Promise<Library[] | null>;
+  createManyLibraries: (
+    userId: string,
+    libraries: MediaCenterLibrary[]
+  ) => Promise<Library[] | null>;
   createManyMovies: (movies: MediaCenterMovie[]) => Promise<Movie[] | null>;
   createManyGenres: (genres: MediaCenterGenre[]) => Promise<{ id: number }[]>;
   // getPaginatedActionsByPark: (parkKey: string, params?: ActionsParams) => Promise<GetActionsByParkReturnType>;

@@ -30,7 +30,7 @@ export class GetAllMoviesUseCase implements IUseCase<Input, Output> {
 
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
-    const movies = await this.movieRepository.getAll(input.count);
+    const movies = await this.movieRepository.getAllMovies(input.count);
 
     await this.authorize(input);
 
