@@ -46,12 +46,14 @@ model Library {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  name      String
-  libraries Library[]
-  sessions  Session[]
-  swipes    Swipe[]
-  matches   Match[]
+  id             String       @id @default(cuid())
+  name           String
+  libraries      Library[]
+  sessions       Session[]
+  swipes         Swipe[]
+  matches        Match[]
+  secrets        ClientSecret @relation(fields: [clientSecretId], references: [id])
+  clientSecretId String
 }
 
 model Session {
@@ -87,13 +89,15 @@ model Match {
 
 model ClientSecret {
   id             String      @id @default(cuid())
+  userId         String      @unique
   secret         String
   mediacenter    MediaCenter
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
   plexUrl        String
   plexToken      String
-  movieSectionId Int
+  movieSectionId Int?
+  User           User[]
 }
 
 enum MediaCenter {

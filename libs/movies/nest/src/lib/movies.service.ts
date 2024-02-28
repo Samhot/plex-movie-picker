@@ -107,12 +107,18 @@ export class MoviesService {
     });
   }
 
-  async fetchMovies(category: MoviesCategory) {
-    return await this.fetchMoviesUseCase.execute({ category: category });
+  async fetchMovies({
+    userId,
+    category,
+  }: {
+    userId: string;
+    category: MoviesCategory;
+  }) {
+    return await this.fetchMoviesUseCase.execute({ userId, category });
   }
 
-  async fetchGenres() {
-    return await this.fetchGenresUseCase.execute({});
+  async fetchGenres(userId: string) {
+    return await this.fetchGenresUseCase.execute({ userId });
   }
 
   // async update(guid: string, updateMovieInput: UpdateMovieInput) {

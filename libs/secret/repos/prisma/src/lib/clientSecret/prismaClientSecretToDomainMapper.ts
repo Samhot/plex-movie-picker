@@ -1,15 +1,15 @@
+import { ClientSecret } from '@plex-tinder/secret/core';
 import {
   MediaCenter,
   ClientSecret as PrismaClientSecret,
 } from '@prisma/client';
-
-import { ClientSecret } from '@plex-tinder/secret/core';
 
 export const prismaClientSecretToDomainMapper = (
   prismaClientSecret: PrismaClientSecret
 ) => {
   const commonFields = {
     id: prismaClientSecret.id,
+    userId: prismaClientSecret.userId,
     createdAt: prismaClientSecret.createdAt,
     updatedAt: prismaClientSecret.updatedAt,
     secret: prismaClientSecret.secret,
@@ -22,7 +22,7 @@ export const prismaClientSecretToDomainMapper = (
         mediacenter: MediaCenter.PLEX,
         plexUrl: prismaClientSecret.plexUrl,
         plexToken: prismaClientSecret.plexToken,
-        movieSectionId: prismaClientSecret.movieSectionId,
+        movieSectionId: prismaClientSecret.movieSectionId ?? undefined,
       } satisfies ClientSecret);
 
     default:

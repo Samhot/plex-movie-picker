@@ -1,7 +1,7 @@
 import { ClientSecret } from '../domain/ClientSecret';
 import { CreateClientSecret } from '../domain/CreateClientSecret';
 
-export interface ClientSecretRepository {
-  getClientSecrets(filters: { id: string }): Promise<ClientSecret | null>;
+export interface IClientSecretRepository {
+  getClientSecrets(filters: { userId: string }): Promise<ClientSecret | null>;
   saveClientSecret(clientSecret: CreateClientSecret): Promise<ClientSecret>;
 }

@@ -10,7 +10,13 @@ export interface IMediaCenterRepository<T extends IMediaCenterCredentials> {
   checkCredentials: (input: T) => Promise<boolean | MediaCenterCheckError>;
   saveCredentials: (input: T) => Promise<boolean>;
 
-  getMovies: (category: MoviesCategory) => Promise<MediaCenterMovie[] | null>;
-  getAllGenres: () => Promise<MediaCenterGenre[] | null>;
-  getLibraries: () => Promise<MediaCenterLibrary[] | null>;
+  getMovies: ({
+    category,
+    userId,
+  }: {
+    category: MoviesCategory;
+    userId: string;
+  }) => Promise<MediaCenterMovie[] | null>;
+  getAllGenres: (userId: string) => Promise<MediaCenterGenre[] | null>;
+  getLibraries: (userId: string) => Promise<MediaCenterLibrary[] | null>;
 }

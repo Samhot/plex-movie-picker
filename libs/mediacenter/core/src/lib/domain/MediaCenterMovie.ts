@@ -18,6 +18,7 @@ export const MediaCenterMovie = z.object({
   audienceRating: z.number().positive().int(),
   genres: z.array(z.string()),
   viewCount: z.number().positive().int(),
+  libraryId: z.number().positive().int(),
 });
 
 export type MediaCenterMovie = z.infer<typeof MediaCenterMovie>;

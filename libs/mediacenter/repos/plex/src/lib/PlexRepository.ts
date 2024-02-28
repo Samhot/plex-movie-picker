@@ -17,7 +17,7 @@ import {
   PlexLibraries,
   PlexLibrary,
 } from './types';
-import { LibraryType } from '@prisma/client';
+import { LibraryType, MediaCenter } from '@prisma/client';
 
 export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   constructor(
@@ -29,9 +29,9 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   ) => Promise<boolean | MediaCenterCheckError>;
   saveCredentials: (input: PlexCredentials) => Promise<boolean>;
 
-  async getClientInfos(id: string) {
+  async getClientInfos(userId?: string) {
     const clientSecret = await this.clientSecret.getClientSecrets({
-      id,
+      userId,
     });
 
     if (!clientSecret) return null;
@@ -43,10 +43,14 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     };
   }
 
-  async getMovies(
-    category: MoviesCategory
-  ): Promise<MediaCenterMovie[] | null> {
-    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
+  async getMovies({
+    userId,
+    category,
+  }: {
+    userId: string;
+    category: MoviesCategory;
+  }): Promise<MediaCenterMovie[] | null> {
+    const clientInfos = await this.getClientInfos(userId);
 
     if (!clientInfos) return null;
     const { plexUrl, plexToken, movieSectionId } = clientInfos;
@@ -75,12 +79,17 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     const data: PlexLibrary = JSON.parse(response.data);
 
     return data.MediaContainer.Metadata.map((movie) =>
-      plexMovieToDomainMapper(movie, plexUrl, plexToken)
+      plexMovieToDomainMapper(
+        movie,
+        plexUrl,
+        plexToken,
+        data.MediaContainer.librarySectionID
+      )
     );
   }
 
-  async getAllGenres(): Promise<MediaCenterGenre[] | null> {
-    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
+  async getAllGenres(userId: string): Promise<MediaCenterGenre[] | null> {
+    const clientInfos = await this.getClientInfos(userId);
 
     if (!clientInfos) return null;
     const { plexUrl, plexToken, movieSectionId } = clientInfos;
@@ -101,8 +110,8 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     );
   }
 
-  async getLibraries(): Promise<MediaCenterLibrary[] | null> {
-    const clientInfos = await this.getClientInfos('cls7wxyvw000012cak9nittst');
+  async getLibraries(userId: string): Promise<MediaCenterLibrary[] | null> {
+    const clientInfos = await this.getClientInfos(userId);
     if (!clientInfos) return null;
     const params = {
       headers: {
@@ -114,6 +123,17 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
       '/library/sections',
       params
     );
+
+    await this.clientSecret.saveClientSecret({
+      ...clientInfos,
+      userId,
+      movieSectionId: Number(
+        response.data.MediaContainer.Directory.find(
+          (library) => library.type === 'movie'
+        )?.key
+      ),
+      mediacenter: MediaCenter.PLEX,
+    });
 
     return response.data.MediaContainer.Directory.map((library) => ({
       id: library.key,

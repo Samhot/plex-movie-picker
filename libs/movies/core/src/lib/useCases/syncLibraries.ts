@@ -40,7 +40,9 @@ export class SyncLibrariesUseCase implements IUseCase<Input, Output> {
   public async execute(input: Input) {
     await this.authorize(input);
 
-    const mediaCenterLibraries = await this.mediaCenterRepo.getLibraries();
+    const mediaCenterLibraries = await this.mediaCenterRepo.getLibraries(
+      input.userId
+    );
 
     if (mediaCenterLibraries) {
       const saved = await this.movieRepository.createManyLibraries(

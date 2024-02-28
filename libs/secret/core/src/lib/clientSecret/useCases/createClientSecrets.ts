@@ -3,18 +3,21 @@ import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
 } from '@plex-tinder/shared/utils';
-
-import { Movie } from '../domain/Movie';
-import { IMovieRepository } from '../repositories/MovieRepository.interface';
+import { ClientSecret } from '../domain/ClientSecret';
 import { Logger } from '@nestjs/common';
+import { IClientSecretRepository } from '../repository/ClientSecretRepository.interface';
 
 type Input = {
-  id: string;
-  //  user: User
+  userId: string;
+  secret: string;
+  mediacenter: 'PLEX';
+  plexUrl: string;
+  plexToken: string;
+  movieSectionId?: number | undefined;
 };
-type Output = Movie | null;
-export class GetMovieByIdUseCase implements IUseCase<Input, Output> {
-  constructor(private readonly movieRepository: IMovieRepository) {}
+type Output = ClientSecret | null;
+export class CreateClientSecretsUseCase implements IUseCase<Input, Output> {
+  constructor(private readonly clientSecretRepo: IClientSecretRepository) {}
 
   static authorization = {
     policies: ['actionPlans_maintenance_access' as const],
@@ -30,11 +33,10 @@ export class GetMovieByIdUseCase implements IUseCase<Input, Output> {
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
     await this.authorize(input);
-
-    const movie = await this.movieRepository.getOneMovie(input.id);
+    const secrets = await this.clientSecretRepo.saveClientSecret(input);
 
     return {
-      success: movie,
+      success: secrets,
       error: null,
     };
   }

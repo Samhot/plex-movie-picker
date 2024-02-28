@@ -53,19 +53,20 @@ export class MoviesController {
   }
 
   @Authorization(FetchGenresUseCase.authorization)
-  @Get('fetch/genres')
+  @Get('fetch/genres/:userId')
   @ApiOkResponse({ status: 200 })
-  fetchGenres() {
-    return this.moviesService.fetchGenres();
+  fetchGenres(@Param('userId') userId: string) {
+    return this.moviesService.fetchGenres(userId);
   }
 
   @Authorization(FetchMoviesUseCase.authorization)
-  @Get('fetch/movies/:category')
+  @Get('fetch/movies/:userId/:category')
   @ApiOkResponse({ status: 200 })
   fetchMovies(
+    @Param('userId') userId: string,
     @Param('category') category: MoviesCategory = MoviesCategory.ALL
   ) {
-    return this.moviesService.fetchMovies(category);
+    return this.moviesService.fetchMovies({ userId, category });
   }
 
   @Authorization(GetMovieByIdUseCase.authorization)

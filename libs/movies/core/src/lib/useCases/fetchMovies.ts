@@ -15,6 +15,7 @@ import { FetchGenresUseCase } from './fetchGenres';
 import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 
 type Input = {
+  userId: string;
   category: MoviesCategory;
 };
 type Output = {
@@ -43,9 +44,9 @@ export class FetchMoviesUseCase implements IUseCase<Input, Output> {
   public async execute(input: Input) {
     await this.authorize(input);
 
-    await this.fetchGenresUseCase.execute({});
+    await this.fetchGenresUseCase.execute(input);
 
-    const movies = await this.mediaCenterRepo.getMovies(input.category);
+    const movies = await this.mediaCenterRepo.getMovies(input);
 
     if (movies) {
       const saved = await this.movieRepository.createManyMovies(movies);

@@ -4,7 +4,8 @@ import { PlexMovie } from './types';
 export const plexMovieToDomainMapper = (
   movie: PlexMovie,
   plexUrl: string,
-  plexToken: string
+  plexToken: string,
+  libraryId: number
 ): MediaCenterMovie => {
   return {
     title: String(movie.title),
@@ -18,6 +19,7 @@ export const plexMovieToDomainMapper = (
     duration: Number(movie.duration),
     audienceRating: movie.audienceRating ? Number(movie.audienceRating) : 0,
     viewCount: movie.viewCount ? Number(movie.viewCount) : 0,
+    libraryId,
   } satisfies MediaCenterMovie;
 };
 

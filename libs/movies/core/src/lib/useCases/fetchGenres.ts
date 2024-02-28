@@ -13,7 +13,7 @@ import { HttpStatusCode } from 'axios';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
 
 type Input = {
-  //
+  userId: string;
 };
 type Output = {
   status: HttpStatusCode;
@@ -40,7 +40,7 @@ export class FetchGenresUseCase implements IUseCase<Input, Output> {
   public async execute(input: Input) {
     await this.authorize(input);
 
-    const genres = await this.mediaCenterRepo.getAllGenres();
+    const genres = await this.mediaCenterRepo.getAllGenres(input.userId);
 
     if (genres) {
       const createdGenres = await this.movieRepository.createManyGenres(

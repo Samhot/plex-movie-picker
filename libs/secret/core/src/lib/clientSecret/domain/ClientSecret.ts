@@ -5,11 +5,12 @@ import { MediaCenter } from '@prisma/client';
 
 export const ClientSecret = z.object({
   id: z.string().refine(isCuid),
+  userId: z.string().refine(isCuid),
   secret: z.string(),
   mediacenter: z.enum([MediaCenter.PLEX]),
   plexUrl: z.string(),
   plexToken: z.string(),
-  movieSectionId: z.number(),
+  movieSectionId: z.number().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });

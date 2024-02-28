@@ -85,6 +85,7 @@ export class PostgresMovieRepository implements IMovieRepository {
   }
 
   async createManyMovies(movies: MediaCenterMovie[]): Promise<Movie[] | null> {
+    const existingLibraries = await this.prisma.library.findMany();
     const savedMovies = await Promise.all(
       movies.map(async (movie) => {
         const { genres, ...rest } = movie;
@@ -98,12 +99,26 @@ export class PostgresMovieRepository implements IMovieRepository {
           },
           create: {
             ...movie,
+            libraries: {
+              connect: {
+                guid: existingLibraries.find(
+                  (l) => l.key === String(movie.libraryId)
+                )?.guid,
+              },
+            },
             genres: {
               connect: await Promise.all(matchedGenres),
             },
           },
           update: {
             ...movie,
+            libraries: {
+              connect: {
+                guid: existingLibraries.find(
+                  (l) => l.key === String(movie.libraryId)
+                )?.guid,
+              },
+            },
             genres: {
               connect: await Promise.all(matchedGenres),
             },

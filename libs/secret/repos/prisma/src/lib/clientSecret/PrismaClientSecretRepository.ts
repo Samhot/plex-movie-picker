@@ -1,26 +1,33 @@
+import {
+  IClientSecretRepository,
+  CreateClientSecret,
+} from '@plex-tinder/secret/core';
 import { PrismaClient } from '@prisma/client';
-
-import { ClientSecret, ClientSecretRepository } from '@plex-tinder/secret/core';
-
 import { prismaClientSecretToDomainMapper } from './prismaClientSecretToDomainMapper';
 
-export class PrismaClientSecretRepository implements ClientSecretRepository {
+export class PrismaClientSecretRepository implements IClientSecretRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getClientSecrets({ id }: { id: string }) {
-    const testest = await this.prisma.clientSecret.findUnique({
-      where: {
-        id,
-      },
-    });
-    if (!testest) return null;
-    return prismaClientSecretToDomainMapper(testest);
+  async getClientSecrets({ userId }: { userId?: string }) {
+    if (userId) {
+      const secrets = await this.prisma.clientSecret.findUnique({
+        where: {
+          userId: userId,
+        },
+      });
+      if (!secrets) return null;
+      return prismaClientSecretToDomainMapper(secrets);
+    } else {
+      return null;
+    }
   }
 
-  async saveClientSecret(clientSecret: ClientSecret) {
+  async saveClientSecret(clientSecret: CreateClientSecret) {
     return prismaClientSecretToDomainMapper(
-      await this.prisma.clientSecret.create({
-        data: clientSecret,
+      await this.prisma.clientSecret.upsert({
+        where: { userId: clientSecret.userId },
+        create: clientSecret,
+        update: clientSecret,
       })
     );
   }
