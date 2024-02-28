@@ -6,11 +6,10 @@ import {
 import { ClientSecret } from '../domain/ClientSecret';
 import { Logger } from '@nestjs/common';
 import { IClientSecretRepository } from '../repository/ClientSecretRepository.interface';
-import { CreateClientSecret } from '../domain/CreateClientSecret';
 
-type Input = CreateClientSecret;
+type Input = { userId: string };
 type Output = ClientSecret | null;
-export class CreateClientSecretsUseCase implements IUseCase<Input, Output> {
+export class GetClientSecretsUseCase implements IUseCase<Input, Output> {
   constructor(private readonly clientSecretRepo: IClientSecretRepository) {}
 
   static authorization = {
@@ -27,7 +26,7 @@ export class CreateClientSecretsUseCase implements IUseCase<Input, Output> {
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
     await this.authorize(input);
-    const secrets = await this.clientSecretRepo.saveClientSecret(input);
+    const secrets = await this.clientSecretRepo.getClientSecrets(input.userId);
 
     return {
       success: secrets,

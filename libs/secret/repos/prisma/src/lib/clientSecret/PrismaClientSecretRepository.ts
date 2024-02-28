@@ -8,7 +8,7 @@ import { prismaClientSecretToDomainMapper } from './prismaClientSecretToDomainMa
 export class PrismaClientSecretRepository implements IClientSecretRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async getClientSecrets({ userId }: { userId?: string }) {
+  async getClientSecrets(userId: string) {
     if (userId) {
       const secrets = await this.prisma.clientSecret.findUnique({
         where: {

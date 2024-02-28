@@ -29,10 +29,8 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   ) => Promise<boolean | MediaCenterCheckError>;
   saveCredentials: (input: PlexCredentials) => Promise<boolean>;
 
-  async getClientInfos(userId?: string) {
-    const clientSecret = await this.clientSecret.getClientSecrets({
-      userId,
-    });
+  async getClientInfos(userId: string) {
+    const clientSecret = await this.clientSecret.getClientSecrets(userId);
 
     if (!clientSecret) return null;
     return {
