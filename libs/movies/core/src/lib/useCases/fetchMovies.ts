@@ -1,4 +1,3 @@
-// import { User } from '@plex-tinder/auth/core';
 import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
@@ -35,9 +34,8 @@ export class FetchMoviesUseCase implements IUseCase<Input, Output> {
     useOrForPolicies: false,
   };
 
-  async authorize(_: Input) {
-    Logger.log('TODO: Check if user is allowed to see this action', _);
-    return true;
+  async authorize(input: Input) {
+    return !!input.userId;
   }
 
   @AuthorizeAndTryCatchUseCase()

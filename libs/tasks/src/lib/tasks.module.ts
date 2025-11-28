@@ -41,7 +41,11 @@ import { Axios } from 'axios';
         http: HttpClient,
         mediaSourceRepo: PrismaMediaSourceRepository
       ) => {
-        return new PlexRepository(http, mediaSourceRepo);
+        return new PlexRepository(
+          http,
+          mediaSourceRepo,
+          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-movie-picker-app'
+        );
       },
       inject: [HttpClient, PrismaMediaSourceRepository],
     },

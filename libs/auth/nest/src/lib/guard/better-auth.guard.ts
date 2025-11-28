@@ -1,18 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from '@nestjs/common';
-import { betterAuth } from 'better-auth';
-import { prismaAdapter } from 'better-auth/adapters/prisma';
-import { PrismaClient } from '@prisma/client';
-
-// TODO: Déplacer la configuration better-auth dans un fichier dédié shared/config
-const auth = betterAuth({
-  database: prismaAdapter(new PrismaClient(), {
-    provider: "postgresql",
-  }),
-  emailAndPassword: {  
-    enabled: true
-  },
-  // Ajout des fournisseurs sociaux possible ici (Google, GitHub...)
-});
+import { auth } from '../config/better-auth.config';
 
 @Injectable()
 export class BetterAuthGuard implements CanActivate {

@@ -3,7 +3,6 @@ import {
   IUseCase,
 } from '@plex-tinder/shared/utils';
 import { MediaSource } from '../domain/MediaSource';
-import { Logger } from '@nestjs/common';
 import { IMediaSourceRepository } from '../repository/MediaSourceRepository.interface';
 
 type Input = { userId: string };
@@ -17,10 +16,8 @@ export class GetMediaSourcesUseCase implements IUseCase<Input, Output> {
     useOrForPolicies: false,
   };
 
-  async authorize(_: Input) {
-    // TODO: Check if user is allowed to see this action
-    Logger.log('TODO: Check if user is allowed to see this action', _);
-    return true;
+  async authorize(input: Input) {
+    return !!input.userId;
   }
 
   @AuthorizeAndTryCatchUseCase()
@@ -34,4 +31,3 @@ export class GetMediaSourcesUseCase implements IUseCase<Input, Output> {
     };
   }
 }
-

@@ -72,14 +72,15 @@ export class MoviesService {
   //   return await this.upsertGenre(genreName);
   // }
 
-  async findAll(count = 10) {
+  async findAll(userId: string, count = 10) {
     return await this.getAllMoviesUseCase.execute({
-      // , user
+      userId,
       count,
     });
   }
 
   async getMoviesFromCriterias(
+    userId: string,
     count = 10,
     watched?: boolean,
     duration?: number,
@@ -94,18 +95,19 @@ export class MoviesService {
     };
 
     return await this.getMoviesFromCriteriasUseCase.execute({
+      userId,
       criterias,
       count,
     });
   }
 
   async getMovie(
-    id: string
-    // , user: User
+    id: string,
+    userId: string
   ) {
     return await this.getMovieByIdUseCase.execute({
       id,
-      // , user
+      userId,
     });
   }
 

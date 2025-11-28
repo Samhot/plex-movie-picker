@@ -1,4 +1,3 @@
-// import { User } from '@plex-tinder/auth/core';
 import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
@@ -6,12 +5,10 @@ import {
 
 import { Movie } from '../domain/Movie';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
-import { Logger } from '@nestjs/common';
 import { SearchCriteria } from '../constants';
 
 type Input = {
-  // id: string;
-  //  user: User
+  userId: string;
   criterias: SearchCriteria;
   count: number;
 };
@@ -24,20 +21,18 @@ export class GetMoviesFromCriteriasUseCase implements IUseCase<Input, Output> {
     useOrForPolicies: false,
   };
 
-  async authorize(_: Input) {
-    // TODO: Check if user is allowed to see this action
-    Logger.log('TODO: Check if user is allowed to see this action', _);
-    return true;
+  async authorize(input: Input) {
+    return !!input.userId;
   }
 
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
+    await this.authorize(input);
+    
     const movies = await this.movieRepository.getMoviesFromCriterias(
       input.criterias,
       input.count
     );
-
-    await this.authorize(input);
 
     return {
       success: movies,

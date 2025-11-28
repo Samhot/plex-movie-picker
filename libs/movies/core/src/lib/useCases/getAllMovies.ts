@@ -1,4 +1,3 @@
-// import { User } from '@plex-tinder/auth/core';
 import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
@@ -6,11 +5,9 @@ import {
 
 import { Movie } from '../domain/Movie';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
-import { Logger } from '@nestjs/common';
 
 type Input = {
-  // id: string;
-  //  user: User
+  userId: string;
   count: number;
 };
 type Output = Movie[] | null;
@@ -22,17 +19,15 @@ export class GetAllMoviesUseCase implements IUseCase<Input, Output> {
     useOrForPolicies: false,
   };
 
-  async authorize(_: Input) {
-    // TODO: Check if user is allowed to see this action
-    Logger.log('TODO: Check if user is allowed to see this action', _);
-    return true;
+  async authorize(input: Input) {
+    return !!input.userId;
   }
 
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
-    const movies = await this.movieRepository.getAllMovies(input.count);
-
     await this.authorize(input);
+
+    const movies = await this.movieRepository.getAllMovies(input.count);
 
     return {
       success: movies,

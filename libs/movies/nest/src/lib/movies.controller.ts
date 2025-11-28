@@ -1,5 +1,7 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { User } from '@plex-tinder/auth/core';
+import { BetterAuthGuard, CurrentUser } from '@plex-tinder/auth/nest';
 import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 import {
   FetchGenresUseCase,
@@ -12,9 +14,8 @@ import {
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
-// import { User } from '@plex-tinder/auth/core';
 
-// @UseGuards(AuthorizationGuard)
+@UseGuards(BetterAuthGuard)
 @Controller('movies')
 @ApiTags('movies')
 export class MoviesController {
@@ -30,14 +31,15 @@ export class MoviesController {
   @Authorization(GetAllMoviesUseCase.authorization)
   @Get()
   @ApiOkResponse({ type: Movie, isArray: true })
-  findAll() {
-    return this.moviesService.findAll();
+  findAll(@CurrentUser() user: User) {
+    return this.moviesService.findAll(user.id);
   }
 
   @Authorization(GetMoviesFromCriteriasUseCase.authorization)
   @Get('search')
   @ApiOkResponse({ type: Movie, isArray: true })
   findFromCriterias(
+    @CurrentUser() user: User,
     @Query('count') count?: number,
     @Query('watched') watched?: boolean,
     @Query('duration') duration?: number,
@@ -45,6 +47,7 @@ export class MoviesController {
     @Query('maxAge') maxAge?: number
   ) {
     return this.moviesService.getMoviesFromCriterias(
+      user.id,
       count,
       watched,
       duration,
@@ -54,39 +57,39 @@ export class MoviesController {
   }
 
   @Authorization(FetchGenresUseCase.authorization)
-  @Get('fetch/genres/:userId')
+  @Get('fetch/genres')
   @ApiOkResponse({ status: 200 })
-  fetchGenres(@Param('userId') userId: string) {
-    return this.moviesService.fetchGenres(userId);
+  fetchGenres(@CurrentUser() user: User) {
+    return this.moviesService.fetchGenres(user.id);
   }
 
   @Authorization(FetchMoviesUseCase.authorization)
-  @Get('fetch/movies/:userId/:category')
+  @Get('fetch/movies/:category')
   @ApiOkResponse({ status: 200 })
   fetchMovies(
-    @Param('userId') userId: string,
+    @CurrentUser() user: User,
     @Param('category') category: MoviesCategory = MoviesCategory.ALL
   ) {
-    return this.moviesService.fetchMovies({ userId, category });
+    return this.moviesService.fetchMovies({ userId: user.id, category });
   }
 
   @Authorization(SyncLibrariesUseCase.authorization)
-  @Get('sync/libraries/:userId')
+  @Get('sync/libraries')
   @ApiOkResponse({ status: 200 })
-  syncLibraries(@Param('userId') userId: string) {
-    return this.moviesService.syncLibraries(userId);
+  syncLibraries(@CurrentUser() user: User) {
+    return this.moviesService.syncLibraries(user.id);
   }
 
   @Authorization(GetMovieByIdUseCase.authorization)
   @Get(':guid')
   @ApiOkResponse({ type: Movie })
   findOne(
-    // @CurrentUser() user: User,
+    @CurrentUser() user: User,
     @Param('guid') guid: string
   ) {
     return this.moviesService.getMovie(
-      guid
-      // , user
+      guid,
+      user.id
     );
   }
 

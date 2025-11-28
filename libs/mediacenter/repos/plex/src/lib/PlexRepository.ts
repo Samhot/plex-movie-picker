@@ -82,11 +82,11 @@ type PlexResourcesResponse = {
 
 export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
   private readonly plexApiUrl = 'https://plex.tv/api/v2';
-  private readonly clientIdentifier = 'plex-movie-picker-app'; // TODO: Make this configurable/unique per install
 
   constructor(
     private readonly http: HttpClient,
-    private readonly mediaSourceRepo: PrismaMediaSourceRepository
+    private readonly mediaSourceRepo: PrismaMediaSourceRepository,
+    private readonly clientIdentifier: string
   ) {}
   checkCredentials: (
     input: PlexCredentials

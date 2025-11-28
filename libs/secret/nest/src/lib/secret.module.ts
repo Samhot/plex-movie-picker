@@ -57,7 +57,11 @@ import { SecretService } from './secret.service';
         http: HttpClient,
         clientSecret: PrismaClientSecretRepository
       ) => {
-        return new PlexRepository(http, clientSecret);
+        return new PlexRepository(
+          http,
+          clientSecret,
+          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-movie-picker-app'
+        );
       },
       inject: [HttpClient, PrismaClientSecretRepository],
     },
