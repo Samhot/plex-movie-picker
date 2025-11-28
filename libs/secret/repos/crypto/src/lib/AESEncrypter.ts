@@ -1,6 +1,6 @@
 import * as crypto from 'crypto';
 
-import { Encrypter } from '@beeldi-app/secret/core';
+import { Encrypter } from '@plex-tinder/secret/core';
 
 export class AESEncrypter implements Encrypter {
     constructor(private readonly key: string, private readonly iv: string) {}

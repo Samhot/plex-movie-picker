@@ -8,7 +8,6 @@ export type AuthorizationData = {
   useOrForPolicies?: boolean;
   // modules?: Module[];
   modules?: any[];
-  doNotCheckPark?: boolean;
 };
 export interface IUseCase<Input, Output, ErrorOutput = Error> {
   execute(input: Input): Promise<IResponse<Output, ErrorOutput>>;

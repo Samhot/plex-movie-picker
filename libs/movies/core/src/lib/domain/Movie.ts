@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-import { isCuidOrCustomFirebasePushId } from '@plex-tinder/shared/utils';
 
 const Genre = z.object({
   id: z.number().positive().int(),
@@ -9,7 +8,7 @@ const Genre = z.object({
 
 export const MovieSchema = z.object({
   title: z.string().min(1),
-  guid: z.string().refine(isCuidOrCustomFirebasePushId),
+  guid: z.string().cuid(),
   summary: z.string().optional(),
   slug: z.string().optional(),
   year: z.number().positive().int(),

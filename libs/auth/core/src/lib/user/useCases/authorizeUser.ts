@@ -4,11 +4,6 @@ import { IResponse } from '@plex-tinder/shared/utils';
 import { User } from '../domain/User';
 
 type Input = {
-  ressource: {
-    parkId: string;
-    buildingsIds?: string[];
-    checkTotalAccessToPark?: boolean;
-  };
   user: User;
   requiredPolicies: readonly Policies[];
   useOrForPolicies: boolean;
@@ -25,33 +20,19 @@ export class AuthorizeUserUseCase implements IUseCase<Input, Output> {
   @AuthorizeAndTryCatchUseCase()
   public async execute({
     user,
-    ressource,
     requiredPolicies,
     useOrForPolicies,
   }: Input): Promise<IResponse<Output>> {
-    const userAuthorizations = user.authorizations.filter(
-      (authorization) =>
-        authorization.parkId === ressource.parkId &&
-        (authorization.buildingsIds?.length
-          ? !ressource.checkTotalAccessToPark
-          : true) &&
-        (ressource.buildingsIds?.length && authorization.buildingsIds?.length
-          ? ressource.buildingsIds.every((b) =>
-              authorization.buildingsIds?.includes(b)
-            )
-          : true)
+    const userPolicies = user.authorizations.flatMap(
+      (authorization) => authorization.policies
     );
 
-    if (!userAuthorizations.length) {
+    if (!userPolicies.length) {
       return {
         success: false,
         error: null,
       };
     }
-
-    const userPolicies = userAuthorizations.flatMap(
-      (authorization) => authorization.policies
-    );
 
     const policyPredicate = (policy: string) =>
       policy

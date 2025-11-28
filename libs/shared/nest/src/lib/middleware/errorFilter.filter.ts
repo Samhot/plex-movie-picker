@@ -3,8 +3,6 @@
 // import { Response } from 'express';
 // import { GraphQLError } from 'graphql';
 
-// import { DEV_ENV_VAR, LOCAL_ENV_VAR, TEST_ENV_VAR } from '@beeldi-app/shared/utils';
-
 // const regex = /\s/g;
 
 // @Catch()

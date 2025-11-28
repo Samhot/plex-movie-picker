@@ -49,7 +49,6 @@ export class LoggingInterceptor implements NestInterceptor {
     return {
       uid: user.id,
       fullName: user.fullName,
-      selectedPark: user.selectedPark,
     };
   }
 
