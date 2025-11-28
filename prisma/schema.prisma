@@ -28,8 +28,6 @@ model Movie {
   summary        String?
   poster         String
   genres         Genre[]
-  swipes         Swipe[]
-  matches        Match[]
   libraries      Library[]
   viewCount      Int       @default(0)
 }
@@ -59,10 +57,12 @@ model User {
   accounts      Account[]
 
   libraries     Library[]
-  swipes        Swipe[]
-  matches       Match[]
   mediaSources  MediaSource[]
-  sessionParticipations SessionParticipation[]
+  
+  // Game Relationships
+  hostedSessions GameSession[] @relation("Host")
+  gameParticipations GameSession[] @relation("GameParticipants")
+  gameActions    GameAction[]
 
   @@map("user")
 }
@@ -112,36 +112,40 @@ model Verification {
   @@map("verification")
 }
 
-// Session de "Swiping" (renommée pour éviter conflit avec Session Auth)
-model SessionParticipation {
-  id        String    @id @default(cuid())
-  users     User[]
-  swipes    Swipe[]
-  startedAt DateTime  @default(now())
-  endedAt   DateTime?
-  matches   Match[]
+// --- GAME MODULE ---
+
+model GameSession {
+  id          String   @id @default(cuid())
+  code        String   @unique // Short code (ABCD)
+  hostId      String
+  host        User     @relation("Host", fields: [hostId], references: [id])
+  
+  status      String   @default("WAITING") // WAITING, IN_PROGRESS, FINISHED
+  movieIds    String[] // The Deck
+  
+  participants User[]  @relation("GameParticipants")
+  actions      GameAction[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  @@map("game_session")
 }
 
-model Swipe {
-  id        String   @id @default(cuid())
-  sessionId String
-  session   SessionParticipation  @relation(fields: [sessionId], references: [id])
-  movieId   String
-  movie     Movie    @relation(fields: [movieId], references: [id])
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
-  liked     Boolean
-  createdAt DateTime @default(now())
-}
-
-model Match {
-  id        String   @id @default(cuid())
-  sessionId String
-  session   SessionParticipation  @relation(fields: [sessionId], references: [id])
-  users     User[]
-  movieId   String
-  movie     Movie    @relation(fields: [movieId], references: [id])
-  createdAt DateTime @default(now())
+model GameAction {
+  id            String      @id @default(cuid())
+  sessionId     String
+  session       GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  
+  type          String      // SWIPE, VOTE_BRACKET, BID, VETO
+  payload       Json        // { liked: true, movieId: "..." }
+  
+  createdAt     DateTime    @default(now())
+  
+  @@map("game_action")
 }
 
 model MediaSource {

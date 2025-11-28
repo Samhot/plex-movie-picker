@@ -13,7 +13,7 @@ import {
   IMovieRepository,
   SyncLibrariesUseCase,
 } from '@plex-tinder/movies/core';
-import { PostgresMovieRepository } from '@plex-tinder/movies/repos/postgres';
+import { PrismaMovieRepository } from '@plex-tinder/movies/repos/prisma';
 import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
 import { HttpClient } from '@plex-tinder/shared/clients/http';
 import { PrismaService } from '@plex-tinder/shared/nest';
@@ -31,21 +31,21 @@ import { MoviesService } from './movies.service';
       useFactory: (movieRepo: IMovieRepository) => {
         return new GetMovieByIdUseCase(movieRepo);
       },
-      inject: [PostgresMovieRepository],
+      inject: [PrismaMovieRepository],
     },
     {
       provide: GetAllMoviesUseCase,
       useFactory: (movieRepo: IMovieRepository) => {
         return new GetAllMoviesUseCase(movieRepo);
       },
-      inject: [PostgresMovieRepository],
+      inject: [PrismaMovieRepository],
     },
     {
       provide: GetMoviesFromCriteriasUseCase,
       useFactory: (movieRepo: IMovieRepository) => {
         return new GetMoviesFromCriteriasUseCase(movieRepo);
       },
-      inject: [PostgresMovieRepository],
+      inject: [PrismaMovieRepository],
     },
     {
       provide: FetchGenresUseCase,
@@ -55,7 +55,7 @@ import { MoviesService } from './movies.service';
       ) => {
         return new FetchGenresUseCase(mediaCenterRepo, movieRepo);
       },
-      inject: [PlexRepository, PostgresMovieRepository],
+      inject: [PlexRepository, PrismaMovieRepository],
     },
     {
       provide: FetchMoviesUseCase,
@@ -70,7 +70,7 @@ import { MoviesService } from './movies.service';
           fetchGenresUseCase
         );
       },
-      inject: [PlexRepository, PostgresMovieRepository, FetchGenresUseCase],
+      inject: [PlexRepository, PrismaMovieRepository, FetchGenresUseCase],
     },
     {
       provide: SyncLibrariesUseCase,
@@ -80,7 +80,7 @@ import { MoviesService } from './movies.service';
       ) => {
         return new SyncLibrariesUseCase(mediaCenterRepo, movieRepo);
       },
-      inject: [PlexRepository, PostgresMovieRepository],
+      inject: [PlexRepository, PrismaMovieRepository],
     },
     {
       provide: MoviesService,
@@ -111,9 +111,9 @@ import { MoviesService } from './movies.service';
       ],
     },
     {
-      provide: PostgresMovieRepository,
+      provide: PrismaMovieRepository,
       useFactory: (prisma: PrismaService) => {
-        return new PostgresMovieRepository(prisma);
+        return new PrismaMovieRepository(prisma);
       },
       inject: [PrismaService],
     },
@@ -123,7 +123,7 @@ import { MoviesService } from './movies.service';
         http: HttpClient,
         mediaSourceRepo: PrismaMediaSourceRepository
       ) => {
-        return new PlexRepository(http, mediaSourceRepo);
+        return new PlexRepository(http, mediaSourceRepo, process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-tinder-app');
       },
       inject: [HttpClient, PrismaMediaSourceRepository],
     },

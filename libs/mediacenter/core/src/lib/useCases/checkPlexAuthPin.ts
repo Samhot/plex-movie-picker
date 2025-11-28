@@ -12,8 +12,15 @@ export class CheckPlexAuthPinUseCase implements IUseCase<Input, Output> {
     useOrForPolicies: false,
   };
 
+  async authorize(input: Input) {
+    return !!input.pinId;
+  }
+
   async execute(input: Input) {
-    return await this.plexRepo.checkPin(input.pinId);
+    return {
+      success: await this.plexRepo.checkPin(input.pinId),
+      error: null,
+    };
   }
 }
 

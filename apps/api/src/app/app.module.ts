@@ -5,6 +5,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule, TasksService } from '@plex-tinder/tasks';
 import { MediacenterNestModule } from '@plex-tinder/mediacenter/nest';
+import { SessionModule } from '@plex-tinder/session/nest';
+import { AuthModule } from '@plex-tinder/auth/nest';
 import {
   IMediaCenterRepository,
   IMediaCenterCredentials,
@@ -15,13 +17,20 @@ import {
   IMovieRepository,
   FetchGenresUseCase,
 } from '@plex-tinder/movies/core';
-import { PostgresMovieRepository } from '@plex-tinder/movies/repos/postgres';
+import { PrismaMovieRepository } from '@plex-tinder/movies/repos/prisma';
 import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
 import { HttpClient } from '@plex-tinder/shared/clients/http';
 import { Axios } from 'axios';
 
 @Module({
-  imports: [CacheModule, MoviesModule, TasksModule, MediacenterNestModule],
+  imports: [
+    CacheModule,
+    MoviesModule,
+    TasksModule,
+    MediacenterNestModule,
+    SessionModule,
+    AuthModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,
@@ -40,7 +49,7 @@ import { Axios } from 'axios';
           fetchGenresUseCase
         );
       },
-      inject: [PlexRepository, PostgresMovieRepository, FetchGenresUseCase],
+      inject: [PlexRepository, PrismaMovieRepository, FetchGenresUseCase],
     },
     {
       provide: PlexRepository,
@@ -51,15 +60,15 @@ import { Axios } from 'axios';
         return new PlexRepository(
           http,
           mediaSourceRepo,
-          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-movie-picker-app'
+          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-tinder-app'
         );
       },
       inject: [HttpClient, PrismaMediaSourceRepository],
     },
     {
-      provide: PostgresMovieRepository,
+      provide: PrismaMovieRepository,
       useFactory: (prisma: PrismaService) => {
-        return new PostgresMovieRepository(prisma);
+        return new PrismaMovieRepository(prisma);
       },
       inject: [PrismaService],
     },
@@ -71,7 +80,7 @@ import { Axios } from 'axios';
       ) => {
         return new FetchGenresUseCase(mediaCenterRepo, movieRepo);
       },
-      inject: [PlexRepository, PostgresMovieRepository],
+      inject: [PlexRepository, PrismaMovieRepository],
     },
     {
       provide: HttpClient,

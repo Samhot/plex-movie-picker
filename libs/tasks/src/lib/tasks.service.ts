@@ -11,7 +11,7 @@ export class TasksService {
   @Cron(CronExpression.EVERY_DAY_AT_7AM)
   handleCron() {
     WinstonLogger.info('Fetching new movies from Plex');
-    this.fetchMoviesUseCase.execute({ category: MoviesCategory.ALL });
+    this.fetchMoviesUseCase.execute({ userId: '1', category: MoviesCategory.ALL });
     WinstonLogger.info('Fetching new movies from Plex done');
   }
 }

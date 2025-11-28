@@ -15,7 +15,7 @@ import { notEmpty } from '@plex-tinder/shared/utils';
 import { prismaMovieToDomainMapper } from './prismaMovieToDomainMapper';
 import { prismaLibraryToDomainMapper } from './prismaLibraryToDomainMapper';
 
-export class PostgresMovieRepository implements IMovieRepository {
+export class PrismaMovieRepository implements IMovieRepository {
   constructor(private readonly prisma: PrismaClient) {}
   async getAllMovies(count: number): Promise<Movie[] | null> {
     const movies = await this.prisma.movie.findMany({

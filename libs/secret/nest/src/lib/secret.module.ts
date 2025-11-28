@@ -60,7 +60,7 @@ import { SecretService } from './secret.service';
         return new PlexRepository(
           http,
           clientSecret,
-          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-movie-picker-app'
+          process.env['PLEX_CLIENT_IDENTIFIER'] || 'plex-tinder-app'
         );
       },
       inject: [HttpClient, PrismaClientSecretRepository],

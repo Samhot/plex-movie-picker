@@ -1,0 +1,171 @@
+{
+  "info": {
+    "name": "Plex Movie Picker - Tinder Session V1",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "0. Guest Auth (Anonymous)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"guestToken\", jsonData.token);",
+              "console.log(\"Guest Token:\", jsonData.token);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"name\": \"GuestUser\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/auth/sign-up/anonymous",
+          "host": ["{{baseUrl}}"],
+          "path": ["auth", "sign-up", "anonymous"]
+        }
+      }
+    },
+    {
+      "name": "1. Create Session (Host)",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "var jsonData = pm.response.json();",
+              "pm.environment.set(\"sessionId\", jsonData.id);",
+              "pm.environment.set(\"sessionCode\", jsonData.code);",
+              "pm.environment.set(\"firstMovieId\", jsonData.movieIds[0]);",
+              "console.log(\"Session Code:\", jsonData.code);"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{hostToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"filters\": {\n        \"limit\": 5\n    }\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions"]
+        }
+      }
+    },
+    {
+      "name": "2. Join Session (Guest)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{guestToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"code\": \"{{sessionCode}}\"\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/join",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "join"]
+        }
+      }
+    },
+    {
+      "name": "3. Swipe RIGHT - Host (Like)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{hostToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/swipe",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "swipe"]
+        }
+      }
+    },
+    {
+      "name": "4. Swipe RIGHT - Guest (Match!)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{guestToken}}",
+            "type": "text"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/sessions/{{sessionId}}/swipe",
+          "host": ["{{baseUrl}}"],
+          "path": ["sessions", "{{sessionId}}", "swipe"]
+        }
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000/api"
+    }
+  ]
+}

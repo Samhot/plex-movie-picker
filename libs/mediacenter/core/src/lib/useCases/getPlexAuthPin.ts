@@ -1,5 +1,4 @@
 import { IUseCase } from '@plex-tinder/shared/utils';
-import { IMediaCenterRepository, PlexCredentials } from '@plex-tinder/mediacenter/core';
 import { PlexRepository } from '@plex-tinder/mediacenter/repos/plex';
 
 type Output = {
@@ -16,8 +15,15 @@ export class GetPlexAuthPinUseCase implements IUseCase<void, Output> {
     useOrForPolicies: false,
   };
 
+  async authorize() {
+    return true;
+  }
+
   async execute() {
-    return await this.plexRepo.getPin();
+    return {
+      success: await this.plexRepo.getPin(),
+      error: null,
+    };
   }
 }
 

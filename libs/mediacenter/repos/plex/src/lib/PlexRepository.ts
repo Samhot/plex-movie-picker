@@ -238,7 +238,7 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
       },
     };
     const response = await this.http.get<PlexLibraries>(
-      '/library/sections',
+      `${clientInfos.plexUrl}/library/sections`,
       params
     );
 

@@ -1,38 +1,17 @@
-# PRODUCT CONTEXT & VISION : Plex Movie Picker
+You are an expert Senior Backend Engineer and Product Owner specializing in NestJS, Prisma, and Clean Architecture.
 
-## 1. La Mission (Value Proposition)
-"Plex Movie Picker" est une application compagnon pour Plex conçue pour résoudre le "Paradoxe du choix".
-Les utilisateurs passent plus de temps à chercher un film qu'à le regarder. Notre but est de réduire ce temps de friction grâce à un système de curation et de vote collaboratif.
+# PROJECT CONTEXT
+Always refer to the file `PRODUCT_CONTEXT.md` to understand the goal of the feature you are working on. We are building a "Tinder for Plex" application.
 
-**Rôle de l'app :** Le "Sommelier" intelligent de la vidéothèque personnelle.
+# CODING STANDARDS (Clean Architecture)
+1. **Separation of Concerns:** Keep Domain, Application (Use Cases), and Infrastructure (Repositories/Controllers) strictly separated.
+2. **Dependencies:** The Domain layer must NOT depend on NestJS or Prisma.
+3. **DTOs:** Always use DTOs for inputs/outputs in Controllers. Use Mappers to convert between Prisma Models and Domain Entities.
+4. **Testing:** Write unit tests for every Use Case.
 
-## 2. Architecture Technique
-Le projet suit une **Clean Architecture (Hexagonale)** stricte avec NestJS.
-- **Libs/Auth :** Gestion des utilisateurs (Firebase) et des groupes.
-- **Libs/Mediacenter :** Abstraction du fournisseur de média (actuellement Plex, futur Jellyfin/Emby).
-- **Libs/Movies :** Cœur de métier (Domaine Movie, Library).
-- **Libs/Session (À FAIRE) :** Le moteur de jeu multijoueur.
-- **DB :** Postgres via Prisma ORM.
+# PRODUCT MINDSET
+- When I ask for a feature implementation, start by explaining strictly *why* it is good for the user (referring to the `PRODUCT_CONTEXT.md`).
+- Challenge me if a technical request contradicts the "Zero Friction" UX principle defined in the context.
 
-**Règle d'or :** Le domaine ne doit jamais dépendre de l'infrastructure (Framework ou DB).
-
-## 3. Fonctionnalité Clé (En cours de dév) : "Le Mode Session"
-C'est la prochaine grosse feature à implémenter.
-**Objectif :** Permettre à un groupe de choisir un film ensemble de manière ludique.
-
-**Workflow Utilisateur (User Journey) :**
-1. **L'Hôte** filtre sa bibliothèque (ex: "Films d'horreur, < 2h, après 2010") et génère un "Deck" de 60 films.
-2. **La Session** est créée avec un Code Court (ex: ABCD).
-3. **Les Invités** rejoignent via une WebApp mobile (scan QR Code) sans créer de compte (Auth anonyme/Guest).
-4. **Le Vote** se fait via une interface de Swipe (Tinder-like) ou Tournoi (Bracket).
-   - Informations visibles : Affiche, Titre, Note, Trailer.
-5. **Le Match** : Dès qu'un consensus est trouvé (ou à la fin de la pile), le résultat s'affiche.
-6. **L'Action** : L'hôte peut lancer le film sur la TV (Deep link Plex) depuis l'app.
-
-## 4. Principes UX
-- **Zero Friction :** Pas de login pour les invités.
-- **Mobile First :** L'interface de vote est pensée pour le smartphone.
-- **Performance :** Les images (posters) doivent être légères.
-- **Satisfaction :** Feedback visuel immédiat lors d'un match.---
-alwaysApply: true
----
+# NEXT STEPS FOCUS
+We are currently focusing on the "Session" module. Prioritize performance and real-time capabilities (considering polling or websockets) for the voting system.
