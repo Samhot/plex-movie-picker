@@ -45,17 +45,75 @@ model Library {
   movies Movie[]
 }
 
+// Modèle utilisateur unifié avec Better-Auth
 model User {
-  id           String        @id @default(cuid())
-  name         String
-  libraries    Library[]
-  sessions     Session[]
-  swipes       Swipe[]
-  matches      Match[]
-  mediaSources MediaSource[]
+  id            String        @id @default(cuid())
+  name          String
+  email         String        @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  sessions      Session[]
+  accounts      Account[]
+
+  libraries     Library[]
+  swipes        Swipe[]
+  matches       Match[]
+  mediaSources  MediaSource[]
+  sessionParticipations SessionParticipation[]
+
+  @@map("user")
 }
 
 model Session {
+  id        String   @id
+  expiresAt DateTime
+  token     String
+  createdAt DateTime
+  updatedAt DateTime
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([token])
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  @@map("account")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verification")
+}
+
+// Session de "Swiping" (renommée pour éviter conflit avec Session Auth)
+model SessionParticipation {
   id        String    @id @default(cuid())
   users     User[]
   swipes    Swipe[]
@@ -67,7 +125,7 @@ model Session {
 model Swipe {
   id        String   @id @default(cuid())
   sessionId String
-  session   Session  @relation(fields: [sessionId], references: [id])
+  session   SessionParticipation  @relation(fields: [sessionId], references: [id])
   movieId   String
   movie     Movie    @relation(fields: [movieId], references: [id])
   userId    String
@@ -79,7 +137,7 @@ model Swipe {
 model Match {
   id        String   @id @default(cuid())
   sessionId String
-  session   Session  @relation(fields: [sessionId], references: [id])
+  session   SessionParticipation  @relation(fields: [sessionId], references: [id])
   users     User[]
   movieId   String
   movie     Movie    @relation(fields: [movieId], references: [id])
