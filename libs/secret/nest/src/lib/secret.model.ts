@@ -1,31 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ClientSecret as PrismaSecret } from '@prisma/client';
+import { MediaSource as PrismaMediaSource, MediaCenter } from '@prisma/client';
 
-export class Secret implements PrismaSecret {
+export class Secret implements PrismaMediaSource {
   @ApiProperty()
   id: string;
 
   @ApiProperty()
   userId: string;
 
+  @ApiProperty({ enum: MediaCenter })
+  type: MediaCenter;
+  
   @ApiProperty()
-  secret: string;
+  url: string;
 
   @ApiProperty()
-  mediacenter: 'PLEX';
+  credentials: any;
+
+  @ApiProperty()
+  isActive: boolean;
 
   @ApiProperty()
   createdAt: Date;
 
   @ApiProperty()
   updatedAt: Date;
-
-  @ApiProperty()
-  plexUrl: string;
-
-  @ApiProperty()
-  plexToken: string;
-
-  @ApiProperty({ required: false, nullable: true })
-  movieSectionId: number | null;
 }

@@ -1,2 +1,2 @@
-export * from './lib/clientSecret/PrismaClientSecretRepository';
-export * from './lib/clientSecret/prismaClientSecretToDomainMapper';
+export * from './lib/mediaSource/PrismaMediaSourceRepository';
+export * from './lib/mediaSource/prismaMediaSourceToDomainMapper';

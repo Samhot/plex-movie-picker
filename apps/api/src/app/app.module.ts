@@ -4,6 +4,7 @@ import { CacheModule, PrismaService } from '@plex-tinder/shared/nest';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule, TasksService } from '@plex-tinder/tasks';
+import { MediacenterNestModule } from '@plex-tinder/mediacenter/nest';
 import {
   IMediaCenterRepository,
   IMediaCenterCredentials,
@@ -15,12 +16,12 @@ import {
   FetchGenresUseCase,
 } from '@plex-tinder/movies/core';
 import { PostgresMovieRepository } from '@plex-tinder/movies/repos/postgres';
-import { PrismaClientSecretRepository } from '@plex-tinder/secret/repos/prisma';
+import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
 import { HttpClient } from '@plex-tinder/shared/clients/http';
 import { Axios } from 'axios';
 
 @Module({
-  imports: [CacheModule, MoviesModule, TasksModule],
+  imports: [CacheModule, MoviesModule, TasksModule, MediacenterNestModule],
   controllers: [AppController],
   providers: [
     AppService,
@@ -45,11 +46,11 @@ import { Axios } from 'axios';
       provide: PlexRepository,
       useFactory: (
         http: HttpClient,
-        clientSecret: PrismaClientSecretRepository
+        mediaSourceRepo: PrismaMediaSourceRepository
       ) => {
-        return new PlexRepository(http, clientSecret);
+        return new PlexRepository(http, mediaSourceRepo);
       },
-      inject: [HttpClient, PrismaClientSecretRepository],
+      inject: [HttpClient, PrismaMediaSourceRepository],
     },
     {
       provide: PostgresMovieRepository,
@@ -82,9 +83,9 @@ import { Axios } from 'axios';
       },
     },
     {
-      provide: PrismaClientSecretRepository,
+      provide: PrismaMediaSourceRepository,
       useFactory: (prisma: PrismaService) => {
-        return new PrismaClientSecretRepository(prisma);
+        return new PrismaMediaSourceRepository(prisma);
       },
       inject: [PrismaService],
     },

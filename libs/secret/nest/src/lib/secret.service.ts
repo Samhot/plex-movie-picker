@@ -1,23 +1,23 @@
 import { Injectable } from '@nestjs/common';
 import {
-  CreateClientSecret,
-  CreateClientSecretsUseCase,
-  GetClientSecretsUseCase,
+  CreateMediaSource,
+  SaveMediaSourceUseCase,
+  GetMediaSourcesUseCase,
 } from '@plex-tinder/secret/core';
 
 @Injectable()
 export class SecretService {
   constructor(
-    private readonly createClientSecretUseCase: CreateClientSecretsUseCase,
-    private readonly getClientSecretUseCase: GetClientSecretsUseCase
+    private readonly saveMediaSourceUseCase: SaveMediaSourceUseCase,
+    private readonly getMediaSourcesUseCase: GetMediaSourcesUseCase
   ) {}
 
-  async createSecret(input: CreateClientSecret) {
-    return await this.createClientSecretUseCase.execute(input);
+  async createSecret(input: CreateMediaSource) {
+    return await this.saveMediaSourceUseCase.execute(input);
   }
 
   async getUserSecrets(userId: string) {
-    return await this.getClientSecretUseCase.execute({
+    return await this.getMediaSourcesUseCase.execute({
       userId,
     });
   }

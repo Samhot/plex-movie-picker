@@ -46,14 +46,13 @@ model Library {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  name           String
-  libraries      Library[]
-  sessions       Session[]
-  swipes         Swipe[]
-  matches        Match[]
-  secrets        ClientSecret @relation(fields: [clientSecretId], references: [id])
-  clientSecretId String
+  id           String        @id @default(cuid())
+  name         String
+  libraries    Library[]
+  sessions     Session[]
+  swipes       Swipe[]
+  matches      Match[]
+  mediaSources MediaSource[]
 }
 
 model Session {
@@ -87,21 +86,26 @@ model Match {
   createdAt DateTime @default(now())
 }
 
-model ClientSecret {
-  id             String      @id @default(cuid())
-  userId         String      @unique
-  secret         String
-  mediacenter    MediaCenter
-  createdAt      DateTime    @default(now())
-  updatedAt      DateTime    @updatedAt
-  plexUrl        String
-  plexToken      String
-  movieSectionId Int?
-  User           User[]
+model MediaSource {
+  id          String      @id @default(cuid())
+  
+  userId      String
+  user        User        @relation(fields: [userId], references: [id])
+  
+  type        MediaCenter
+  url         String
+  credentials Json        // Stocke token, secret, movieSectionId, etc. de manière flexible
+  
+  isActive    Boolean     @default(true)
+  
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 }
 
 enum MediaCenter {
   PLEX
+  JELLYFIN
+  EMBY
 }
 
 enum LibraryType {

@@ -7,6 +7,7 @@ import {
   GetAllMoviesUseCase,
   GetMovieByIdUseCase,
   GetMoviesFromCriteriasUseCase,
+  SyncLibrariesUseCase,
 } from '@plex-tinder/movies/core';
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
@@ -67,6 +68,13 @@ export class MoviesController {
     @Param('category') category: MoviesCategory = MoviesCategory.ALL
   ) {
     return this.moviesService.fetchMovies({ userId, category });
+  }
+
+  @Authorization(SyncLibrariesUseCase.authorization)
+  @Get('sync/libraries/:userId')
+  @ApiOkResponse({ status: 200 })
+  syncLibraries(@Param('userId') userId: string) {
+    return this.moviesService.syncLibraries(userId);
   }
 
   @Authorization(GetMovieByIdUseCase.authorization)

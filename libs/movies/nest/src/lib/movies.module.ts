@@ -11,9 +11,10 @@ import {
   GetMovieByIdUseCase,
   GetMoviesFromCriteriasUseCase,
   IMovieRepository,
+  SyncLibrariesUseCase,
 } from '@plex-tinder/movies/core';
 import { PostgresMovieRepository } from '@plex-tinder/movies/repos/postgres';
-import { PrismaClientSecretRepository } from '@plex-tinder/secret/repos/prisma';
+import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
 import { HttpClient } from '@plex-tinder/shared/clients/http';
 import { PrismaService } from '@plex-tinder/shared/nest';
 import { Axios } from 'axios';
@@ -72,20 +73,32 @@ import { MoviesService } from './movies.service';
       inject: [PlexRepository, PostgresMovieRepository, FetchGenresUseCase],
     },
     {
+      provide: SyncLibrariesUseCase,
+      useFactory: (
+        mediaCenterRepo: IMediaCenterRepository<IMediaCenterCredentials>,
+        movieRepo: IMovieRepository
+      ) => {
+        return new SyncLibrariesUseCase(mediaCenterRepo, movieRepo);
+      },
+      inject: [PlexRepository, PostgresMovieRepository],
+    },
+    {
       provide: MoviesService,
       useFactory: (
         getMovieByIdUseCase: GetMovieByIdUseCase,
         getAllMoviesUseCase: GetAllMoviesUseCase,
         getMoviesFromCriteriasUseCase: GetMoviesFromCriteriasUseCase,
         fetchMoviesUseCase: FetchMoviesUseCase,
-        fetchGenresUseCase: FetchGenresUseCase
+        fetchGenresUseCase: FetchGenresUseCase,
+        syncLibrariesUseCase: SyncLibrariesUseCase
       ) => {
         return new MoviesService(
           getMovieByIdUseCase,
           getAllMoviesUseCase,
           getMoviesFromCriteriasUseCase,
           fetchMoviesUseCase,
-          fetchGenresUseCase
+          fetchGenresUseCase,
+          syncLibrariesUseCase
         );
       },
       inject: [
@@ -94,6 +107,7 @@ import { MoviesService } from './movies.service';
         GetMoviesFromCriteriasUseCase,
         FetchMoviesUseCase,
         FetchGenresUseCase,
+        SyncLibrariesUseCase,
       ],
     },
     {
@@ -107,16 +121,16 @@ import { MoviesService } from './movies.service';
       provide: PlexRepository,
       useFactory: (
         http: HttpClient,
-        clientSecret: PrismaClientSecretRepository
+        mediaSourceRepo: PrismaMediaSourceRepository
       ) => {
-        return new PlexRepository(http, clientSecret);
+        return new PlexRepository(http, mediaSourceRepo);
       },
-      inject: [HttpClient, PrismaClientSecretRepository],
+      inject: [HttpClient, PrismaMediaSourceRepository],
     },
     {
-      provide: PrismaClientSecretRepository,
+      provide: PrismaMediaSourceRepository,
       useFactory: (prisma: PrismaService) => {
-        return new PrismaClientSecretRepository(prisma);
+        return new PrismaMediaSourceRepository(prisma);
       },
       inject: [PrismaService],
     },

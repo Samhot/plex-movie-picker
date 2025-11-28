@@ -1,16 +1,16 @@
-// import { User } from '@plex-tinder/auth/core';
 import {
   AuthorizeAndTryCatchUseCase,
   IUseCase,
 } from '@plex-tinder/shared/utils';
-import { ClientSecret } from '../domain/ClientSecret';
+import { MediaSource } from '../domain/MediaSource';
 import { Logger } from '@nestjs/common';
-import { IClientSecretRepository } from '../repository/ClientSecretRepository.interface';
+import { IMediaSourceRepository } from '../repository/MediaSourceRepository.interface';
 
 type Input = { userId: string };
-type Output = ClientSecret | null;
-export class GetClientSecretsUseCase implements IUseCase<Input, Output> {
-  constructor(private readonly clientSecretRepo: IClientSecretRepository) {}
+type Output = MediaSource[] | null;
+
+export class GetMediaSourcesUseCase implements IUseCase<Input, Output> {
+  constructor(private readonly mediaSourceRepo: IMediaSourceRepository) {}
 
   static authorization = {
     policies: ['actionPlans_maintenance_access' as const],
@@ -26,11 +26,12 @@ export class GetClientSecretsUseCase implements IUseCase<Input, Output> {
   @AuthorizeAndTryCatchUseCase()
   public async execute(input: Input) {
     await this.authorize(input);
-    const secrets = await this.clientSecretRepo.getClientSecrets(input.userId);
+    const sources = await this.mediaSourceRepo.getMediaSources(input.userId);
 
     return {
-      success: secrets,
+      success: sources,
       error: null,
     };
   }
 }
+

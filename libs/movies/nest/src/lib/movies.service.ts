@@ -8,6 +8,7 @@ import {
   GetMovieByIdUseCase,
   GetMoviesFromCriteriasUseCase,
   SearchCriteria,
+  SyncLibrariesUseCase,
 } from '@plex-tinder/movies/core';
 
 @Injectable()
@@ -18,7 +19,8 @@ export class MoviesService {
     private readonly getAllMoviesUseCase: GetAllMoviesUseCase,
     private readonly getMoviesFromCriteriasUseCase: GetMoviesFromCriteriasUseCase,
     private readonly fetchMoviesUseCase: FetchMoviesUseCase,
-    private readonly fetchGenresUseCase: FetchGenresUseCase
+    private readonly fetchGenresUseCase: FetchGenresUseCase,
+    private readonly syncLibrariesUseCase: SyncLibrariesUseCase
   ) {}
 
   // async create(createMovieDto: CreateMovieInput) {
@@ -119,6 +121,10 @@ export class MoviesService {
 
   async fetchGenres(userId: string) {
     return await this.fetchGenresUseCase.execute({ userId });
+  }
+
+  async syncLibraries(userId: string) {
+    return await this.syncLibrariesUseCase.execute({ userId });
   }
 
   // async update(guid: string, updateMovieInput: UpdateMovieInput) {
