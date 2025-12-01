@@ -152,13 +152,6 @@ export type PlexGenreDirectory = {
   type: string;
 };
 
-export enum MoviesCategory {
-  ALL = 'all',
-  RECENTLY_ADDED = 'recentlyAdded',
-  NEWEST = 'newest',
-  UNWATCHED = 'unwatched',
-}
-
 export type PlexLibraries = {
   MediaContainer: {
     size: number;

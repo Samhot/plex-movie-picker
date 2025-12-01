@@ -2,18 +2,20 @@ import { HttpClient } from '@plex-tinder/shared/clients/http';
 
 import {
   IMediaCenterRepository,
+  IPlexAuthRepository,
   MediaCenterCheckError,
   MediaCenterGenre,
   MediaCenterLibrary,
   MediaCenterMovie,
+  MoviesCategory,
   PlexCredentials,
+  PlexResourcesResponse,
 } from '@plex-tinder/mediacenter/core';
 import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
 import { PlexCredentials as PlexSourceCredentials } from '@plex-tinder/secret/core';
 import { plexGenreToDomainMapper } from './plexGenreToDomainMapper';
 import { plexMovieToDomainMapper } from './plexMovieToDomainMapper';
 import {
-  MoviesCategory,
   PlexGenreRequest,
   PlexLibraries,
   PlexLibrary,
@@ -45,42 +47,7 @@ type PlexPinResponse = {
   newRegistration: string | null;
 };
 
-type PlexResourcesResponse = {
-  name: string;
-  product: string;
-  productVersion: string;
-  platform: string;
-  platformVersion: string;
-  device: string;
-  clientIdentifier: string;
-  createdAt: string;
-  lastSeenAt: string;
-  provides: string;
-  ownerId: string | null;
-  sourceTitle: string | null;
-  publicAddress: string;
-  accessToken: string;
-  owned: boolean;
-  home: boolean;
-  synced: boolean;
-  relay: boolean;
-  presence: boolean;
-  httpsRequired: boolean;
-  publicAddressMatches: boolean;
-  dnsRebindingProtection: boolean;
-  natLoopbackSupported: boolean;
-  connections: {
-    protocol: string;
-    address: string;
-    port: number;
-    uri: string;
-    local: boolean;
-    relay: boolean;
-    IPv6: boolean;
-  }[];
-}[];
-
-export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
+export class PlexRepository implements IMediaCenterRepository<PlexCredentials>, IPlexAuthRepository {
   private readonly plexApiUrl = 'https://plex.tv/api/v2';
 
   constructor(
@@ -129,8 +96,8 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials> {
     return response.data.authToken;
   }
 
-  async getResources(token: string): Promise<PlexResourcesResponse> {
-    const response = await this.http.get<PlexResourcesResponse>(
+  async getResources(token: string): Promise<PlexResourcesResponse[]> {
+    const response = await this.http.get<PlexResourcesResponse[]>(
       `${this.plexApiUrl}/resources`,
       {
         headers: {

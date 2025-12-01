@@ -1,4 +1,4 @@
-import { Genre, Library as PrismaLibrary } from '@prisma/client';
+import { Genre } from '@prisma/client';
 
 import {
   MediaCenterGenre,

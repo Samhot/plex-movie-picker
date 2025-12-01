@@ -4,15 +4,15 @@ import {
   IResponse,
   IUseCase,
 } from '@plex-tinder/shared/utils';
-import { PlexRepository } from '@plex-tinder/mediacenter/repos/plex';
+import { IPlexAuthRepository } from '../repositories/IPlexAuthRepository';
 import { PlexResourcesResponse } from '../domain/PlexResourcesResponse';
 
 type Input = { token: string };
 type Output = PlexResourcesResponse[];
 
 export class GetPlexResourcesUseCase implements IUseCase<Input, Output> {
-  constructor(private readonly plexRepo: PlexRepository) {}
-  authorize(input: Input): Promise<boolean> | boolean {
+  constructor(private readonly plexRepo: IPlexAuthRepository) {}
+  authorize(): Promise<boolean> | boolean {
     throw new Error('Method not implemented.');
   }
   authorization?: AuthorizationData | AuthorizationData[] | undefined;
@@ -25,7 +25,7 @@ export class GetPlexResourcesUseCase implements IUseCase<Input, Output> {
   @AuthorizeAndTryCatchUseCase()
   async execute(input: Input): Promise<IResponse<Output, Error>> {
     const resources: PlexResourcesResponse[] = await this.plexRepo.getResources(input.token);
-    await this.authorize(input);
+    await this.authorize();
     if (resources) {
       return {
         success: resources,

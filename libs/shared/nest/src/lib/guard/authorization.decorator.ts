@@ -1,5 +1,5 @@
 import { SetMetadata } from '@nestjs/common';
-import { AuthorizationData } from 'libs/shared/utils/src/lib/domain/IUseCase';
+import { AuthorizationData } from '@plex-tinder/shared/utils';
 
 
 export const AUTHORIZATION_METADATA = 'AUTHORIZATION';

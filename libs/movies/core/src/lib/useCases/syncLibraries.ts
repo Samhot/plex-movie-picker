@@ -3,7 +3,6 @@ import {
   IUseCase,
 } from '@plex-tinder/shared/utils';
 
-import { Logger } from '@nestjs/common';
 import {
   IMediaCenterCredentials,
   IMediaCenterRepository,

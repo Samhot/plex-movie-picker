@@ -1,7 +1,7 @@
 import { CheckError } from '@plex-tinder/shared/utils';
 import { IMediaCenterCredentials } from '../domain/IMediaCenterCredentials.interface';
 import { MediaCenterGenre, MediaCenterMovie } from '../domain/MediaCenterMovie';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
+import { MoviesCategory } from '../domain/MoviesCategory';
 import { MediaCenterLibrary } from '../domain/MediaCenterLibrary';
 
 export type MediaCenterCheckError = CheckError<'invalid_credentials'>;

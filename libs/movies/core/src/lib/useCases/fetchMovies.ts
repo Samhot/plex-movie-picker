@@ -3,7 +3,6 @@ import {
   IUseCase,
 } from '@plex-tinder/shared/utils';
 
-import { Logger } from '@nestjs/common';
 import {
   IMediaCenterCredentials,
   IMediaCenterRepository,
@@ -11,7 +10,7 @@ import {
 import { HttpStatusCode } from 'axios';
 import { IMovieRepository } from '../repositories/MovieRepository.interface';
 import { FetchGenresUseCase } from './fetchGenres';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
+import { MoviesCategory } from '@plex-tinder/mediacenter/core';
 
 type Input = {
   userId: string;
