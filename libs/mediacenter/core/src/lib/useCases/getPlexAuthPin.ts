@@ -11,7 +11,7 @@ export class GetPlexAuthPinUseCase implements IUseCase<void, Output> {
   constructor(private readonly plexRepo: PlexRepository) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['mediacenter_plex_auth_pin_get' as const],
     useOrForPolicies: false,
   };
 

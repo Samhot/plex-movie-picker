@@ -26,7 +26,7 @@ export class FetchGenresUseCase implements IUseCase<Input, Output> {
   ) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['movies_fetchGenres' as const],
     useOrForPolicies: false,
   };
 

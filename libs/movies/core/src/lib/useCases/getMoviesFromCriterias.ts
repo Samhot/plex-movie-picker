@@ -17,7 +17,7 @@ export class GetMoviesFromCriteriasUseCase implements IUseCase<Input, Output> {
   constructor(private readonly movieRepository: IMovieRepository) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['movies_getMoviesFromCriterias' as const],
     useOrForPolicies: false,
   };
 

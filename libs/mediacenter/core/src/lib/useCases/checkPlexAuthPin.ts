@@ -8,7 +8,7 @@ export class CheckPlexAuthPinUseCase implements IUseCase<Input, Output> {
   constructor(private readonly plexRepo: PlexRepository) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['mediacenter_plex_auth_pin_check' as const],
     useOrForPolicies: false,
   };
 

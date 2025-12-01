@@ -1,4 +1,4 @@
-import { Genre, PrismaClient, Library as PrismaLibrary } from '@prisma/client';
+import { Genre, Library as PrismaLibrary } from '@prisma/client';
 
 import {
   MediaCenterGenre,
@@ -14,9 +14,10 @@ import {
 import { notEmpty } from '@plex-tinder/shared/utils';
 import { prismaMovieToDomainMapper } from './prismaMovieToDomainMapper';
 import { prismaLibraryToDomainMapper } from './prismaLibraryToDomainMapper';
+import { PrismaService } from '@plex-tinder/shared/clients/prisma';
 
 export class PrismaMovieRepository implements IMovieRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
   async getAllMovies(count: number): Promise<Movie[] | null> {
     const movies = await this.prisma.movie.findMany({
       include: { genres: true },

@@ -5,13 +5,13 @@ import {
   ISessionRepository,
   Session,
   SessionStatus,
-} from '../../../../core/src';
-import { User } from 'better-auth';
-import { PrismaClient } from '@prisma/client';
+} from '@plex-tinder/session/core';
+import { PrismaService } from '@plex-tinder/shared/clients/prisma';
+import { User } from '@plex-tinder/auth/core';
 
 @Injectable()
 export class PrismaSessionRepository implements ISessionRepository {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async create(session: Session): Promise<void> {
     await this.prisma.gameSession.create({
@@ -50,16 +50,11 @@ export class PrismaSessionRepository implements ISessionRepository {
         (p) =>
           ({
             id: p.id,
-            name: p.name,
             email: p.email,
-            emailVerified: p.emailVerified,
-            image: p.image,
-            createdAt: p.createdAt,
-            updatedAt: p.updatedAt,
             fullName: p.name ?? '',
             disabled: false,
-            authorizations: { policies: [] },
-          })
+            authorizations: [],
+          } as User)
       ),
       sessionModel.createdAt
     );
@@ -85,12 +80,10 @@ export class PrismaSessionRepository implements ISessionRepository {
         (p) =>
           ({
             id: p.id,
-            name: p.name,
             email: p.email,
-            emailVerified: p.emailVerified,
-            image: p.image,
-            createdAt: p.createdAt,
-            updatedAt: p.updatedAt,
+            fullName: p.name ?? '',
+            disabled: false,
+            authorizations: [],
           } as User)
       ),
       sessionModel.createdAt

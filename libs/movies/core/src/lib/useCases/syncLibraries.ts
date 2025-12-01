@@ -26,7 +26,7 @@ export class SyncLibrariesUseCase implements IUseCase<Input, Output> {
   ) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['movies_syncLibraries' as const],
     useOrForPolicies: false,
   };
 

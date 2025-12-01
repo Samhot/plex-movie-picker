@@ -30,7 +30,7 @@ export class FetchMoviesUseCase implements IUseCase<Input, Output> {
   ) {}
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['movies_fetchMovies' as const],
     useOrForPolicies: false,
   };
 

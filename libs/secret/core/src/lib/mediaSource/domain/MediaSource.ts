@@ -1,5 +1,4 @@
 import { z } from 'zod';
-import { isCuid } from '@plex-tinder/shared/utils';
 import { MediaCenter } from '@prisma/client';
 
 // Définition des credentials spécifiques à Plex
@@ -16,8 +15,8 @@ export const MediaSourceCredentialsSchema = z.union([
 ]);
 
 export const MediaSource = z.object({
-  id: z.string().refine(isCuid),
-  userId: z.string().refine(isCuid),
+  id: z.string().cuid(),
+  userId: z.string().cuid(),
   type: z.nativeEnum(MediaCenter),
   url: z.string(),
   credentials: MediaSourceCredentialsSchema,

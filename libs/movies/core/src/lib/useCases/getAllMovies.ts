@@ -14,8 +14,8 @@ type Output = Movie[] | null;
 export class GetAllMoviesUseCase implements IUseCase<Input, Output> {
   constructor(private readonly movieRepository: IMovieRepository) {}
 
-  static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+  static 	authorization = {
+    policies: ['movies_getAll' as const],
     useOrForPolicies: false,
   };
 

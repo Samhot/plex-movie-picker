@@ -16,7 +16,7 @@ export class PlexController {
     private readonly getPlexResourcesUseCase: GetPlexResourcesUseCase
   ) {}
 
-  @Authorization(GetPlexAuthPinUseCase.authorization)
+  @Authorization(GetPlexAuthPinUseCase.authorization )
   @Get('auth/pin')
   @ApiOkResponse({ status: 200 })
   getAuthPin() {

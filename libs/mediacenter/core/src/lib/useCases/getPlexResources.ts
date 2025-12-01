@@ -18,7 +18,7 @@ export class GetPlexResourcesUseCase implements IUseCase<Input, Output> {
   authorization?: AuthorizationData | AuthorizationData[] | undefined;
 
   static authorization = {
-    policies: ['actionPlans_maintenance_access' as const],
+    policies: ['mediacenter_plex_resources_get' as const],
     useOrForPolicies: false,
   };
 
