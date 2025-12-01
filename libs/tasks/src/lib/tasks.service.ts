@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
+import { MoviesCategory } from '@plex-tinder/mediacenter/core';
 import { FetchMoviesUseCase } from '@plex-tinder/movies/core';
 import { WinstonLogger } from '@plex-tinder/shared/utils';
 

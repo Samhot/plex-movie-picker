@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
+import { MoviesCategory } from '@plex-tinder/mediacenter/core';
 // import { User } from '@plex-tinder/auth/core';
 import {
   FetchGenresUseCase,

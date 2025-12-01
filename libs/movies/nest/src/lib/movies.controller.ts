@@ -2,7 +2,6 @@ import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@plex-tinder/auth/core';
 import { BetterAuthGuard, CurrentUser } from '@plex-tinder/auth/nest';
-import { MoviesCategory } from '@plex-tinder/mediacenter/repos/plex';
 import {
   FetchGenresUseCase,
   FetchMoviesUseCase,
@@ -14,6 +13,7 @@ import {
 import { Authorization } from '@plex-tinder/shared/nest';
 import { Movie } from './movie.model';
 import { MoviesService } from './movies.service';
+import { MoviesCategory } from '@plex-tinder/mediacenter/core';
 
 @UseGuards(BetterAuthGuard)
 @Controller('movies')
