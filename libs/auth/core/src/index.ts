@@ -4,6 +4,4 @@ export * from './lib/user/domain/ElementaryUser';
 export * from './lib/user/test-utils';
 export * from './lib/user/types/role';
 export * from './lib/user/useCases/authorizeUser';
-export * from './lib/user/repositories/UserRepository.interface';
-export * from './lib/user/repositories/UserRepository.mock';
 export * from './lib/user/utils';
