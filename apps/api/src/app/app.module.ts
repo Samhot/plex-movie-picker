@@ -5,7 +5,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TasksModule, TasksService } from '@plex-tinder/tasks';
 import { MediacenterNestModule } from '@plex-tinder/mediacenter/nest';
-import { SessionModule } from '@plex-tinder/session/nest';
+import { GameSessionModule } from '@plex-tinder/game-session/nest';
 import { AuthModule } from '@plex-tinder/auth/nest';
 import {
   IMediaCenterRepository,
@@ -28,7 +28,7 @@ import { Axios } from 'axios';
     MoviesModule,
     TasksModule,
     MediacenterNestModule,
-    SessionModule,
+    GameSessionModule,
     AuthModule,
   ],
   controllers: [AppController],

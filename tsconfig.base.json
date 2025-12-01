@@ -55,11 +55,11 @@
       "@plex-tinder/secret/repos/prisma": [
         "libs/secret/repos/prisma/src/index.ts"
       ],
-      "@plex-tinder/session": ["libs/session/nest/src/index.ts"],
-      "@plex-tinder/session/core": ["libs/session/core/src/index.ts"],
-      "@plex-tinder/session/nest": ["libs/session/nest/src/index.ts"],
-      "@plex-tinder/session/repos/prisma": [
-        "libs/session/repos/prisma/src/index.ts"
+      "@plex-tinder/game-session": ["libs/game-session/nest/src/index.ts"],
+      "@plex-tinder/game-session/core": ["libs/game-session/core/src/index.ts"],
+      "@plex-tinder/game-session/nest": ["libs/game-session/nest/src/index.ts"],
+      "@plex-tinder/game-session/repos/prisma": [
+        "libs/game-session/repos/prisma/src/index.ts"
       ]
     }
   },
