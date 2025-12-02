@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+// Le contrôleur Auth est remplacé par un middleware Express dans main.ts
+// import { AuthController } from './auth.controller';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [],  // Pas de contrôleur, Better Auth est monté comme middleware
   providers: [],
   exports: [],
 })

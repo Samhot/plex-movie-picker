@@ -36,11 +36,14 @@ export class ProcessSwipeUseCase implements IUseCase<Input, Output> {
 
   public async execute(input: Input): Promise<IResponse<Output, Error>> {
     try {
+      console.log('ProcessSwipe input:', input);
+      
       // 1. Get GameSession
       const session = await this.gameSessionRepository.findById(input.sessionId);
       if (!session) {
         return { success: null, error: new Error('GameSession not found') };
       }
+      console.log('Found session:', session.id, 'with', session.participants.length, 'participants');
 
       // 2. Create Action Object
       const action = new GameAction(
@@ -55,15 +58,18 @@ export class ProcessSwipeUseCase implements IUseCase<Input, Output> {
       // 3. Save Action (Persistence)
       // We need to save the action to DB so history is preserved
       await this.gameSessionRepository.addGameAction(input.sessionId, action);
+      console.log('Action saved');
 
       // 4. Re-fetch all actions to calculate state
       // Optimization: We could pass only the new action if the strategy was stateful, 
       // but pure strategy requires full history or accumulated state.
       // For V1 MVP: We fetch all actions for this session.
       const allActions = await this.gameSessionRepository.getGameActions(input.sessionId);
+      console.log('Total actions:', allActions.length);
 
       // 5. Process via Game Engine
       const gameState = this.gameStrategy.processAction(session, action, allActions);
+      console.log('Game state:', gameState);
 
       // 6. Handle Result
       if (gameState.isGameOver && gameState.winnerMovieId) {
@@ -89,7 +95,9 @@ export class ProcessSwipeUseCase implements IUseCase<Input, Output> {
         error: null,
       };
     } catch (error) {
-      return { success: null, error: error as Error };
+      console.error('ProcessSwipe error:', error);
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return { success: null, error: new Error(errorMessage) };
     }
   }
 }

@@ -9,3 +9,4 @@ export * from './lib/domain/PlexResourcesResponse';
 export * from './lib/useCases/getPlexAuthPin';
 export * from './lib/useCases/checkPlexAuthPin';
 export * from './lib/useCases/getPlexResources';
+export * from './lib/useCases/configurePlex';

@@ -21,11 +21,13 @@ import { GameSessionGateway } from './GameSessionGateway';
     GameSessionGateway,
     {
       provide: 'IMovieRepository',
-      useClass: PrismaMovieRepository,
+      useFactory: (prisma: PrismaService) => new PrismaMovieRepository(prisma),
+      inject: [PrismaService],
     },
     {
       provide: 'IGameSessionRepository',
-      useClass: PrismaGameSessionRepository,
+      useFactory: (prisma: PrismaService) => new PrismaGameSessionRepository(prisma),
+      inject: [PrismaService],
     },
     {
       provide: 'IGameSessionNotifier',

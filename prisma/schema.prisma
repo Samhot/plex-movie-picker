@@ -47,11 +47,12 @@ model Library {
 model User {
   id            String        @id @default(cuid())
   name          String
-  email         String        @unique
-  emailVerified Boolean
+  email         String?       @unique  // Nullable pour les utilisateurs anonymes
+  emailVerified Boolean       @default(false)
   image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+  isAnonymous   Boolean       @default(false)  // Requis par le plugin anonymous() de Better Auth
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   sessions      Session[]
   accounts      Account[]

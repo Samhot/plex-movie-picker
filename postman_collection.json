@@ -1,165 +1,423 @@
 {
   "info": {
-    "name": "Plex Movie Picker - Tinder Session V1",
+    "name": "Plex Movie Picker - Tinder Session V2",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "0. Guest Auth (Anonymous)",
-      "event": [
+      "name": "Phase 1 - Setup",
+      "item": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "pm.environment.set(\"guestToken\", jsonData.token);",
-              "console.log(\"Guest Token:\", jsonData.token);"
+          "name": "0a. Host Auth (Email/Password)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"hostToken\", jsonData.token);",
+                  "    console.log(\"Host Token saved!\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              }
             ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"name\": \"GuestUser\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"email\": \"host@test.com\",\n    \"password\": \"Test1234!\",\n    \"name\": \"Host\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/sign-up/email",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "sign-up", "email"]
             }
           }
         },
-        "url": {
-          "raw": "{{baseUrl}}/auth/sign-up/anonymous",
-          "host": ["{{baseUrl}}"],
-          "path": ["auth", "sign-up", "anonymous"]
-        }
-      }
-    },
-    {
-      "name": "1. Create Session (Host)",
-      "event": [
         {
-          "listen": "test",
-          "script": {
-            "exec": [
-              "var jsonData = pm.response.json();",
-              "pm.environment.set(\"sessionId\", jsonData.id);",
-              "pm.environment.set(\"sessionCode\", jsonData.code);",
-              "pm.environment.set(\"firstMovieId\", jsonData.movieIds[0]);",
-              "console.log(\"Session Code:\", jsonData.code);"
+          "name": "0b. Get Plex PIN",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success) {",
+                  "    pm.environment.set(\"plexPinId\", jsonData.success.id);",
+                  "    pm.environment.set(\"plexPinCode\", jsonData.success.code);",
+                  "    console.log(\"Go to plex.tv/link and enter code:\", jsonData.success.code);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plex/auth/pin",
+              "host": ["{{baseUrl}}"],
+              "path": ["plex", "auth", "pin"]
+            }
+          }
+        },
+        {
+          "name": "0c. Check Plex PIN (after plex.tv/link)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.success.authToken) {",
+                  "    pm.environment.set(\"plexAuthToken\", jsonData.success.authToken);",
+                  "    console.log(\"Plex Auth Token saved!\");",
+                  "} else {",
+                  "    console.log(\"PIN not yet validated. Go to plex.tv/link and enter code:\", pm.environment.get(\"plexPinCode\"));",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plex/auth/pin/{{plexPinId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["plex", "auth", "pin", "{{plexPinId}}"]
+            }
+          }
+        },
+        {
+          "name": "0d. Get Plex Resources (Servers)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "console.log(\"Available Plex servers:\", JSON.stringify(jsonData, null, 2));",
+                  "// Find the first server with connections",
+                  "if (jsonData.success && jsonData.success.length > 0) {",
+                  "    var server = jsonData.success.find(s => s.connections && s.connections.length > 0);",
+                  "    if (server) {",
+                  "        var localConn = server.connections.find(c => c.local) || server.connections[0];",
+                  "        pm.environment.set(\"plexServerUrl\", localConn.uri);",
+                  "        console.log(\"Plex Server URL saved:\", localConn.uri);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/plex/resources?token={{plexAuthToken}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["plex", "resources"],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "{{plexAuthToken}}"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "0e. Configure Plex",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
             ],
-            "type": "text/javascript"
-          }
-        }
-      ],
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{hostToken}}",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"filters\": {\n        \"limit\": 5\n    }\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"serverUrl\": \"{{plexServerUrl}}\",\n    \"token\": \"{{plexAuthToken}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/plex/config",
+              "host": ["{{baseUrl}}"],
+              "path": ["plex", "config"]
             }
           }
         },
-        "url": {
-          "raw": "{{baseUrl}}/sessions",
-          "host": ["{{baseUrl}}"],
-          "path": ["sessions"]
+        {
+          "name": "0f. Sync Libraries",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/movies/sync/libraries",
+              "host": ["{{baseUrl}}"],
+              "path": ["movies", "sync", "libraries"]
+            }
+          }
+        },
+        {
+          "name": "0g. Fetch Movies from Plex",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/movies/fetch/movies/all",
+              "host": ["{{baseUrl}}"],
+              "path": ["movies", "fetch", "movies", "all"]
+            }
+          }
+        },
+        {
+          "name": "0h. Get All Movies (verify)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.success.length > 0) {",
+                  "    var movieIds = jsonData.success.slice(0, 5).map(m => m.guid);",
+                  "    pm.environment.set(\"movieIds\", JSON.stringify(movieIds));",
+                  "    pm.environment.set(\"firstMovieId\", movieIds[0]);",
+                  "    console.log(\"Found\", jsonData.success.length, \"movies. First 5 IDs saved.\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/movies",
+              "host": ["{{baseUrl}}"],
+              "path": ["movies"]
+            }
+          }
         }
-      }
+      ]
     },
     {
-      "name": "2. Join Session (Guest)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{guestToken}}",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"code\": \"{{sessionCode}}\"\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+      "name": "Phase 2 - Game Flow",
+      "item": [
+        {
+          "name": "1. Guest Auth (Anonymous)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.token) {",
+                  "    pm.environment.set(\"guestToken\", jsonData.token);",
+                  "    console.log(\"Guest Token saved!\");",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Origin",
+                "value": "http://localhost:3000",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/auth/sign-in/anonymous",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "sign-in", "anonymous"]
             }
           }
         },
-        "url": {
-          "raw": "{{baseUrl}}/sessions/join",
-          "host": ["{{baseUrl}}"],
-          "path": ["sessions", "join"]
-        }
-      }
-    },
-    {
-      "name": "3. Swipe RIGHT - Host (Like)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{hostToken}}",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+        {
+          "name": "2. Create Session (Host)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "var jsonData = pm.response.json();",
+                  "if (jsonData.success && jsonData.success.session) {",
+                  "    pm.environment.set(\"sessionId\", jsonData.success.session.id);",
+                  "    pm.environment.set(\"sessionCode\", jsonData.success.session.code);",
+                  "    if (jsonData.success.session.movieIds && jsonData.success.session.movieIds.length > 0) {",
+                  "        pm.environment.set(\"firstMovieId\", jsonData.success.session.movieIds[0]);",
+                  "    }",
+                  "    console.log(\"Session created! Code:\", jsonData.success.session.code);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"movieIds\": {{movieIds}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/game-sessions",
+              "host": ["{{baseUrl}}"],
+              "path": ["game-sessions"]
             }
           }
         },
-        "url": {
-          "raw": "{{baseUrl}}/sessions/{{sessionId}}/swipe",
-          "host": ["{{baseUrl}}"],
-          "path": ["sessions", "{{sessionId}}", "swipe"]
-        }
-      }
-    },
-    {
-      "name": "4. Swipe RIGHT - Guest (Match!)",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Authorization",
-            "value": "Bearer {{guestToken}}",
-            "type": "text"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
-          "options": {
-            "raw": {
-              "language": "json"
+        {
+          "name": "3. Join Session (Guest)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{guestToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"code\": \"{{sessionCode}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/game-sessions/join",
+              "host": ["{{baseUrl}}"],
+              "path": ["game-sessions", "join"]
             }
           }
         },
-        "url": {
-          "raw": "{{baseUrl}}/sessions/{{sessionId}}/swipe",
-          "host": ["{{baseUrl}}"],
-          "path": ["sessions", "{{sessionId}}", "swipe"]
+        {
+          "name": "4. Swipe RIGHT - Host (Like)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{hostToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/game-sessions/{{sessionId}}/swipe",
+              "host": ["{{baseUrl}}"],
+              "path": ["game-sessions", "{{sessionId}}", "swipe"]
+            }
+          }
+        },
+        {
+          "name": "5. Swipe RIGHT - Guest (Match!)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{guestToken}}",
+                "type": "text"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"movieId\": \"{{firstMovieId}}\",\n    \"liked\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/game-sessions/{{sessionId}}/swipe",
+              "host": ["{{baseUrl}}"],
+              "path": ["game-sessions", "{{sessionId}}", "swipe"]
+            }
+          }
         }
-      }
+      ]
     }
   ],
   "variable": [

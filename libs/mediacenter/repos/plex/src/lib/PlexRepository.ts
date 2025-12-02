@@ -160,8 +160,8 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials>, 
       params.headers['X-Plex-Container-Size'] = '10';
     }
 
-    const response = await this.http.get<string>(`${url}`, params);
-    const data: PlexLibrary = JSON.parse(response.data);
+    const response = await this.http.get<PlexLibrary>(`${url}`, params);
+    const data = response.data;
 
     return data.MediaContainer.Metadata.map((movie) =>
       plexMovieToDomainMapper(
@@ -187,8 +187,8 @@ export class PlexRepository implements IMediaCenterRepository<PlexCredentials>, 
       },
     };
 
-    const response = await this.http.get<string>(`${url}`, params);
-    const data: PlexGenreRequest = JSON.parse(response.data);
+    const response = await this.http.get<PlexGenreRequest>(`${url}`, params);
+    const data = response.data;
 
     return data.MediaContainer.Directory.map((genre) =>
       plexGenreToDomainMapper(genre)

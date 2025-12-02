@@ -3,3 +3,4 @@ export * from './lib/auth.module';
 export * from './lib/guard/better-auth.guard';
 export * from './lib/decorators/current-user.decorator';
 export * from './lib/mappers/user.mapper';
+export { auth } from './lib/config/better-auth.config';

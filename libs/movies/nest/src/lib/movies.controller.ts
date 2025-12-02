@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common';
+import { Controller, DefaultValuePipe, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { User } from '@plex-tinder/auth/core';
 import { BetterAuthGuard, CurrentUser } from '@plex-tinder/auth/nest';
@@ -31,8 +31,11 @@ export class MoviesController {
   @Authorization(GetAllMoviesUseCase.authorization)
   @Get()
   @ApiOkResponse({ type: Movie, isArray: true })
-  findAll(@CurrentUser() user: User) {
-    return this.moviesService.findAll(user.id);
+  findAll(
+    @CurrentUser() user: User,
+    @Query('count', new DefaultValuePipe(10), ParseIntPipe) count: number
+  ) {
+    return this.moviesService.findAll(user.id, count);
   }
 
   @Authorization(GetMoviesFromCriteriasUseCase.authorization)

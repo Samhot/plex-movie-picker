@@ -7,6 +7,8 @@
     "prisma:migrate": "yarn prisma migrate dev && POSTGRES_URL=$POSTGRES_TEST_URL yarn prisma migrate dev",
     "prisma:migrate:deploy": "yarn prisma migrate deploy && POSTGRES_URL=$POSTGRES_TEST_URL yarn prisma migrate deploy",
     "prisma:generate": "yarn prisma generate",
+    "prisma:studio": "yarn prisma studio",
+    "db:reset:soft": "yarn prisma migrate reset --skip-seed && yarn prisma migrate deploy",
     "start": "nx serve api"
   },
   "private": true,

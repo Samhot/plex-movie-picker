@@ -21,9 +21,15 @@ export class TinderGameStrategy implements IGameStrategy {
   private calculateState(session: GameSession, actions: GameAction[]): GameState {
     // Logic: Check if any movie has been liked by ALL participants
     const participantsCount = session.participants.length;
-    if (participantsCount === 0) return { isGameOver: false };
+    
+    // Need at least 2 participants for a match to be meaningful
+    if (participantsCount < 2) {
+      console.log('TinderStrategy: Not enough participants for a match', participantsCount);
+      return { isGameOver: false };
+    }
 
-    const likesPerMovie: Record<string, number> = {};
+    // Track which users liked which movies (Set to avoid duplicates)
+    const likesPerMovie: Record<string, Set<string>> = {};
 
     for (const action of actions) {
       if (
@@ -31,26 +37,30 @@ export class TinderGameStrategy implements IGameStrategy {
         (action.payload as { liked: boolean }).liked
       ) {
         const movieId = (action.payload as { movieId: string }).movieId;
-        if (movieId) {
-          likesPerMovie[movieId] = (likesPerMovie[movieId] || 0) + 1;
+        const userId = action.userId;
+        
+        if (movieId && userId) {
+          if (!likesPerMovie[movieId]) {
+            likesPerMovie[movieId] = new Set();
+          }
+          likesPerMovie[movieId].add(userId);
           
-          // WIN CONDITION
-          if (likesPerMovie[movieId] >= participantsCount) {
+          console.log(`TinderStrategy: Movie ${movieId} has ${likesPerMovie[movieId].size}/${participantsCount} likes`);
+          
+          // WIN CONDITION: All participants liked this movie
+          if (likesPerMovie[movieId].size >= participantsCount) {
             return {
               isGameOver: true,
               winnerMovieId: movieId,
               metadata: {
                 winningReason: 'CONSENSUS',
+                likesCount: likesPerMovie[movieId].size,
               },
             };
           }
         }
       }
     }
-
-    // Check if we ran out of movies (optional: if everyone swiped everything)
-    // This requires tracking who swiped what. 
-    // For now, keep it simple: just check for match.
 
     return {
       isGameOver: false,

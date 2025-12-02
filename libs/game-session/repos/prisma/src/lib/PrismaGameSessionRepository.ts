@@ -8,6 +8,7 @@ import {
 } from '@plex-tinder/game-session/core';
 import { PrismaService } from '@plex-tinder/shared/clients/prisma';
 import { User } from '@plex-tinder/auth/core';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class PrismaGameSessionRepository implements IGameSessionRepository {
@@ -112,7 +113,7 @@ export class PrismaGameSessionRepository implements IGameSessionRepository {
         sessionId,
         userId: action.userId,
         type: action.type,
-        payload: JSON.stringify(action.payload),
+        payload: action.payload as Prisma.InputJsonValue,
       },
     });
   }
@@ -123,15 +124,24 @@ export class PrismaGameSessionRepository implements IGameSessionRepository {
       orderBy: { createdAt: 'asc' },
     });
 
-    return actions.map(
-      (a) =>
-        new GameAction(
-          a.userId,
-          a.type as GameActionType,
-          a.payload as Record<string, unknown>,
-          a.createdAt
-        )
-    );
+    return actions.map((a) => {
+      // Handle legacy data that was double-serialized
+      let payload = a.payload as Record<string, unknown>;
+      if (typeof payload === 'string') {
+        try {
+          payload = JSON.parse(payload);
+        } catch {
+          console.warn(`Failed to parse payload for action ${a.id}`);
+        }
+      }
+      
+      return new GameAction(
+        a.userId,
+        a.type as GameActionType,
+        payload,
+        a.createdAt
+      );
+    });
   }
 }
 

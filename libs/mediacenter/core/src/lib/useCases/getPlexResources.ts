@@ -1,6 +1,4 @@
 import {
-  AuthorizationData,
-  AuthorizeAndTryCatchUseCase,
   IResponse,
   IUseCase,
 } from '@plex-tinder/shared/utils';
@@ -12,29 +10,36 @@ type Output = PlexResourcesResponse[];
 
 export class GetPlexResourcesUseCase implements IUseCase<Input, Output> {
   constructor(private readonly plexRepo: IPlexAuthRepository) {}
-  authorize(): Promise<boolean> | boolean {
-    throw new Error('Method not implemented.');
-  }
-  authorization?: AuthorizationData | AuthorizationData[] | undefined;
 
   static authorization = {
     policies: ['mediacenter_plex_resources_get' as const],
     useOrForPolicies: false,
   };
 
-  @AuthorizeAndTryCatchUseCase()
+  async authorize(input: Input): Promise<boolean> {
+    return !!input.token;
+  }
+
   async execute(input: Input): Promise<IResponse<Output, Error>> {
-    const resources: PlexResourcesResponse[] = await this.plexRepo.getResources(input.token);
-    await this.authorize();
-    if (resources) {
+    try {
+      const resources: PlexResourcesResponse[] = await this.plexRepo.getResources(input.token);
+      
+      if (resources && resources.length > 0) {
+        return {
+          success: resources,
+          error: null,
+        };
+      }
+      
       return {
-        success: resources,
-        error: null,
+        success: null,
+        error: new Error('No resources found'),
+      };
+    } catch (error) {
+      return {
+        success: null,
+        error: error as Error,
       };
     }
-    return {
-      success: null,
-      error: Error('No resources found'),
-    };
   }
 }

@@ -4,6 +4,7 @@ import {
   GetPlexAuthPinUseCase,
   CheckPlexAuthPinUseCase,
   GetPlexResourcesUseCase,
+  ConfigurePlexUseCase,
 } from '@plex-tinder/mediacenter/core';
 import { PlexRepository } from '@plex-tinder/mediacenter/repos/plex';
 import { PrismaMediaSourceRepository } from '@plex-tinder/secret/repos/prisma';
@@ -35,6 +36,13 @@ import { Axios } from 'axios';
         return new GetPlexResourcesUseCase(plexRepo);
       },
       inject: [PlexRepository],
+    },
+    {
+      provide: ConfigurePlexUseCase,
+      useFactory: (mediaSourceRepo: PrismaMediaSourceRepository) => {
+        return new ConfigurePlexUseCase(mediaSourceRepo);
+      },
+      inject: [PrismaMediaSourceRepository],
     },
     {
       provide: PlexRepository,

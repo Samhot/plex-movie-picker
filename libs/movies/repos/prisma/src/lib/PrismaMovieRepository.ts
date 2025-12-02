@@ -87,49 +87,91 @@ export class PrismaMovieRepository implements IMovieRepository {
 
   async createManyMovies(movies: MediaCenterMovie[]): Promise<Movie[] | null> {
     const existingLibraries = await this.prisma.library.findMany();
-    const savedMovies = await Promise.all(
-      movies.map(async (movie) => {
-        const { genres, ...rest } = movie;
+    const savedMovies: (ReturnType<typeof prismaMovieToDomainMapper>)[] = [];
+    const skippedMovies: string[] = [];
+    
+    for (const movie of movies) {
+      try {
+        // Validation des champs obligatoires
+        if (!movie.year || isNaN(movie.year) || movie.year <= 0) {
+          skippedMovies.push(`"${movie.title}" (missing/invalid year)`);
+          continue;
+        }
+        
+        if (!movie.guid || !movie.title) {
+          skippedMovies.push(`"${movie.title || 'Unknown'}" (missing guid or title)`);
+          continue;
+        }
+
+        // Extraire les champs qui ne correspondent pas au schéma Prisma
+        const { genres, libraryId, ...movieData } = movie;
+        
+        // Nettoyer les valeurs "undefined" string
+        const cleanedMovieData = {
+          ...movieData,
+          slug: movieData.slug === 'undefined' ? null : movieData.slug,
+          tagline: movieData.tagline === 'undefined' ? null : movieData.tagline,
+          summary: movieData.summary === 'undefined' ? null : movieData.summary,
+        };
+        
+        // Trouver les genres correspondants dans la DB
         const matchedGenres = (
           await Promise.all(genres?.map((genre) => this.findGenre(genre)) ?? [])
         ).filter(notEmpty);
 
-        return await this.prisma.movie.upsert({
+        // Trouver la bibliothèque correspondante
+        const matchedLibrary = existingLibraries.find(
+          (l) => l.key === String(libraryId)
+        );
+
+        const saved = await this.prisma.movie.upsert({
           where: {
-            guid: rest.guid,
+            guid: cleanedMovieData.guid,
           },
           create: {
-            ...movie,
-            libraries: {
-              connect: {
-                guid: existingLibraries.find(
-                  (l) => l.key === String(movie.libraryId)
-                )?.guid,
+            ...cleanedMovieData,
+            ...(matchedLibrary && {
+              libraries: {
+                connect: { guid: matchedLibrary.guid },
               },
-            },
-            genres: {
-              connect: await Promise.all(matchedGenres),
-            },
+            }),
+            ...(matchedGenres.length > 0 && {
+              genres: {
+                connect: matchedGenres.map((g) => ({ id: g.id })),
+              },
+            }),
           },
           update: {
-            ...movie,
-            libraries: {
-              connect: {
-                guid: existingLibraries.find(
-                  (l) => l.key === String(movie.libraryId)
-                )?.guid,
+            ...cleanedMovieData,
+            ...(matchedLibrary && {
+              libraries: {
+                connect: { guid: matchedLibrary.guid },
               },
-            },
-            genres: {
-              connect: await Promise.all(matchedGenres),
-            },
+            }),
+            ...(matchedGenres.length > 0 && {
+              genres: {
+                set: matchedGenres.map((g) => ({ id: g.id })),
+              },
+            }),
           },
           include: { genres: true },
         });
-      })
-    );
+        
+        savedMovies.push(prismaMovieToDomainMapper(saved));
+      } catch (error) {
+        console.error(`Error saving movie "${movie.title}" (${movie.guid}):`, error);
+        skippedMovies.push(`"${movie.title}" (${(error as Error).message})`);
+        // Continue instead of throwing - don't let one bad movie break the whole import
+      }
+    }
 
-    return savedMovies.map(prismaMovieToDomainMapper);
+    if (skippedMovies.length > 0) {
+      console.warn(`Skipped ${skippedMovies.length} movies:`, skippedMovies);
+    }
+    
+    console.log(`Successfully saved ${savedMovies.length} movies`);
+
+    return savedMovies;
   }
 
   async getLibraries(userId: string): Promise<Library[] | null> {
@@ -160,3 +202,4 @@ export class PrismaMovieRepository implements IMovieRepository {
     return savedLibraries.map(prismaLibraryToDomainMapper);
   }
 }
+

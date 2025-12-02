@@ -26,6 +26,20 @@ export class HttpClient {
     };
   }
 
+  /**
+   * Parse response data if it's a JSON string
+   */
+  private parseResponseData<T>(data: unknown): T {
+    if (typeof data === 'string') {
+      try {
+        return JSON.parse(data) as T;
+      } catch {
+        return data as T;
+      }
+    }
+    return data as T;
+  }
+
   async get<T>(url: string, params?: RequestParams): Promise<Response<T>> {
     const response = await this.axiosService.get<T>(url, {
       headers: {
@@ -35,7 +49,7 @@ export class HttpClient {
 
     return {
       status: response.status,
-      data: response.data,
+      data: this.parseResponseData<T>(response.data),
     };
   }
 
@@ -51,7 +65,7 @@ export class HttpClient {
 
     return {
       status: response.status,
-      data: response.data,
+      data: this.parseResponseData<T>(response.data),
     };
   }
 
@@ -67,7 +81,7 @@ export class HttpClient {
 
     return {
       status: response.status,
-      data: response.data,
+      data: this.parseResponseData<T>(response.data),
     };
   }
 }
