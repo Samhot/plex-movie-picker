@@ -24,6 +24,7 @@ export class PrismaGameSessionRepository implements IGameSessionRepository {
         movieIds: session.movieIds,
         createdAt: session.createdAt,
         updatedAt: new Date(),
+        expiresAt: session.expiresAt,
         participants: {
           connect: session.participants.map((p) => ({ id: p.id })),
         },
@@ -57,7 +58,8 @@ export class PrismaGameSessionRepository implements IGameSessionRepository {
             authorizations: [],
           } as User)
       ),
-      sessionModel.createdAt
+      sessionModel.createdAt,
+      sessionModel.expiresAt ?? undefined
     );
   }
 
@@ -87,7 +89,8 @@ export class PrismaGameSessionRepository implements IGameSessionRepository {
             authorizations: [],
           } as User)
       ),
-      sessionModel.createdAt
+      sessionModel.createdAt,
+      sessionModel.expiresAt ?? undefined
     );
   }
 

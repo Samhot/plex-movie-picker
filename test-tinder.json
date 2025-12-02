@@ -1,0 +1,221 @@
+{
+  "host": {
+    "token": "0BJGgmnlp7162ashF0qU0vrvH3nfMH7i",
+    "user": {
+      "name": "Host",
+      "email": "host@test.com",
+      "emailVerified": false,
+      "image": null,
+      "createdAt": "2025-12-02T10:49:13.238Z",
+      "updatedAt": "2025-12-02T10:49:13.238Z",
+      "isAnonymous": false,
+      "id": "enUw8tbCdPJPvBvbnM9OXw3fJzDc7aua"
+    }
+  },
+  "get-plex-pin": {
+    "success": {
+      "code": "DSPJ",
+      "id": 1674599195,
+      "authUrl": "https://app.plex.tv/auth#?clientID=votre-uuid-unique-ici-12345&code=DSPJ&context%5Bdevice%5D%5Bproduct%5D=Plex%20Movie%20Picker"
+    },
+    "error": null
+  },
+  "check-plex-pin": {
+    "success": "7NzQdfWsZBh7nuJNBXSC",
+    "error": null
+  },
+  "get-plex-resources": {
+    "success": [
+      {
+        "name": "NASticot",
+        "product": "Plex Media Server",
+        "productVersion": "1.43.0.10231-ca3956848",
+        "platform": "Linux",
+        "platformVersion": "4.4.302+",
+        "device": "Docker Container (LinuxServer.io)",
+        "clientIdentifier": "1c95a473dbe9d73c7222070d2bfb7b272fc54f0a",
+        "provides": "server",
+        "ownerId": null,
+        "sourceTitle": null,
+        "publicAddress": "176.133.93.57",
+        "accessToken": "7NzQdfWsZBh7nuJNBXSC",
+        "searchEnabled": true,
+        "createdAt": "2025-03-07T09:10:25Z",
+        "lastSeenAt": "2025-12-02T02:20:01Z",
+        "owned": true,
+        "home": false,
+        "synced": false,
+        "relay": true,
+        "presence": true,
+        "httpsRequired": false,
+        "publicAddressMatches": true,
+        "dnsRebindingProtection": false,
+        "natLoopbackSupported": true,
+        "connections": [
+          {
+            "protocol": "http",
+            "address": "192.168.1.118",
+            "port": 32400,
+            "uri": "http://192.168.1.118:32400",
+            "local": true,
+            "relay": false,
+            "IPv6": false
+          },
+          {
+            "protocol": "http",
+            "address": "192.168.0.1",
+            "port": 32400,
+            "uri": "http://192.168.0.1:32400",
+            "local": true,
+            "relay": false,
+            "IPv6": false
+          },
+          {
+            "protocol": "http",
+            "address": "176.133.93.57",
+            "port": 28102,
+            "uri": "http://176.133.93.57:28102",
+            "local": false,
+            "relay": false,
+            "IPv6": false
+          }
+        ]
+      }
+    ],
+    "error": null
+  },
+  "save-plex-config": {
+    "success": {
+      "configured": true
+    },
+    "error": null
+  },
+  "sync-plex-libraries": {
+    "success": {
+      "status": 201,
+      "savedCount": 0,
+      "foundCount": 3
+    },
+    "error": null
+  },
+  "fetch-plex-movies": {
+    "success": {
+      "status": 201,
+      "savedCount": 0,
+      "foundCount": 926
+    },
+    "error": null
+  },
+  "create-guest-user": {
+    "token": "5fXqqZNgOxQuI54cibdLgkrbx4QHAiAL",
+    "user": {
+      "id": "5BIq1ADoPJm6xda0fL0igE8xga8IRXX2",
+      "email": "temp@mg5uhybalgks1asygg9loiumfd9a1uqd.com",
+      "emailVerified": false,
+      "name": "Anonymous",
+      "createdAt": "2025-12-02T11:49:15.707Z",
+      "updatedAt": "2025-12-02T11:49:15.707Z"
+    }
+  },
+  "create-game-session": {
+    "id": "77366167-6b2b-4c0c-9862-3dae3399403d",
+    "code": "W2DU",
+    "hostId": "enUw8tbCdPJPvBvbnM9OXw3fJzDc7aua",
+    "movieIds": [
+      "plex://movie/5d776d6cfb0d55001f59fdfc",
+      "plex://movie/601978bd212b59002bbf52d4",
+      "plex://movie/5d776a827a53e9001e707430",
+      "plex://movie/61b7469227e5f877e29df627",
+      "plex://movie/5d7768a6594b2b001e691db7",
+      "plex://movie/613c7a671fe69c7d644a8f9b",
+      "plex://movie/5d776c16fb0d55001f57c60a",
+      "plex://movie/5d776d8efb0d55001f5a3c34",
+      "plex://movie/5e16138ce0d3ae001ed11b39",
+      "plex://movie/5d77687f7e5fa10020bf09f3",
+      "plex://movie/5f409c475a76a80042e6b3b6",
+      "plex://movie/5d776c6fad5437001f7be040",
+      "plex://movie/5e16256053953d003edeeaae",
+      "plex://movie/5d776b5b594b2b001e6d79bf",
+      "plex://movie/5d776d6c51dd69001fe4274b",
+      "plex://movie/5d776e577a53e9001e773ec1",
+      "plex://movie/64161430d37a5afc21a92867",
+      "plex://movie/5d777093ad5437001f825d23",
+      "plex://movie/5d776b05fb0d55001f559234",
+      "plex://movie/5d776a35fb0d55001f53de82"
+    ],
+    "status": "WAITING",
+    "participants": [
+      {
+        "id": "enUw8tbCdPJPvBvbnM9OXw3fJzDc7aua",
+        "email": "host@test.com",
+        "fullName": "Host",
+        "disabled": false,
+        "authorizations": []
+      }
+    ],
+    "createdAt": "2025-12-02T12:45:34.572Z"
+  },
+  "join-game-session": {
+    "success": {
+      "session": {
+        "id": "77366167-6b2b-4c0c-9862-3dae3399403d",
+        "code": "W2DU",
+        "hostId": "enUw8tbCdPJPvBvbnM9OXw3fJzDc7aua",
+        "movieIds": [
+          "plex://movie/5d776d6cfb0d55001f59fdfc",
+          "plex://movie/601978bd212b59002bbf52d4",
+          "plex://movie/5d776a827a53e9001e707430",
+          "plex://movie/61b7469227e5f877e29df627",
+          "plex://movie/5d7768a6594b2b001e691db7",
+          "plex://movie/613c7a671fe69c7d644a8f9b",
+          "plex://movie/5d776c16fb0d55001f57c60a",
+          "plex://movie/5d776d8efb0d55001f5a3c34",
+          "plex://movie/5e16138ce0d3ae001ed11b39",
+          "plex://movie/5d77687f7e5fa10020bf09f3",
+          "plex://movie/5f409c475a76a80042e6b3b6",
+          "plex://movie/5d776c6fad5437001f7be040",
+          "plex://movie/5e16256053953d003edeeaae",
+          "plex://movie/5d776b5b594b2b001e6d79bf",
+          "plex://movie/5d776d6c51dd69001fe4274b",
+          "plex://movie/5d776e577a53e9001e773ec1",
+          "plex://movie/64161430d37a5afc21a92867",
+          "plex://movie/5d777093ad5437001f825d23",
+          "plex://movie/5d776b05fb0d55001f559234",
+          "plex://movie/5d776a35fb0d55001f53de82"
+        ],
+        "status": "WAITING",
+        "participants": [
+          {
+            "id": "enUw8tbCdPJPvBvbnM9OXw3fJzDc7aua",
+            "email": "host@test.com",
+            "fullName": "Host",
+            "disabled": false,
+            "authorizations": []
+          },
+          {
+            "id": "5BIq1ADoPJm6xda0fL0igE8xga8IRXX2",
+            "email": "temp@mg5uhybalgks1asygg9loiumfd9a1uqd.com",
+            "fullName": "Anonymous",
+            "disabled": false,
+            "authorizations": []
+          }
+        ],
+        "createdAt": "2025-12-02T12:45:34.572Z"
+      }
+    },
+    "error": null
+  },
+  "first-like": {
+    "success": {
+      "isMatch": false
+    },
+    "error": null
+  },
+  "second-like": {
+    "success": {
+      "isMatch": true,
+      "matchedMovieId": "plex://movie/5d776d6cfb0d55001f59fdfc"
+    },
+    "error": null
+  }
+}

@@ -24,7 +24,6 @@ export class TinderGameStrategy implements IGameStrategy {
     
     // Need at least 2 participants for a match to be meaningful
     if (participantsCount < 2) {
-      console.log('TinderStrategy: Not enough participants for a match', participantsCount);
       return { isGameOver: false };
     }
 
@@ -44,8 +43,6 @@ export class TinderGameStrategy implements IGameStrategy {
             likesPerMovie[movieId] = new Set();
           }
           likesPerMovie[movieId].add(userId);
-          
-          console.log(`TinderStrategy: Movie ${movieId} has ${likesPerMovie[movieId].size}/${participantsCount} likes`);
           
           // WIN CONDITION: All participants liked this movie
           if (likesPerMovie[movieId].size >= participantsCount) {

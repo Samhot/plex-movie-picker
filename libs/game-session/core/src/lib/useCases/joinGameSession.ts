@@ -4,6 +4,8 @@ import { IGameSessionRepository } from '../repositories/GameSessionRepository.in
 import { IGameSessionNotifier } from '../ports/GameSessionNotifier.interface';
 import { User } from '@plex-tinder/auth/core';
 
+const MAX_PARTICIPANTS = 10;
+
 type Input = {
   code: string;
   user: User;
@@ -29,6 +31,17 @@ export class JoinGameSessionUseCase implements IUseCase<Input, Output> {
 
       if (!session) {
         return { success: null, error: new Error('GameSession not found') };
+      }
+
+      // Check if session is expired
+      if (session.isExpired()) {
+        return { success: null, error: new Error('GameSession has expired') };
+      }
+
+      // Check if session is full (but allow if user is already a participant)
+      const isAlreadyParticipant = session.participants.some(p => p.id === input.user.id);
+      if (!isAlreadyParticipant && session.participants.length >= MAX_PARTICIPANTS) {
+        return { success: null, error: new Error(`Session is full (max ${MAX_PARTICIPANTS} participants)`) };
       }
 
       // Idempotency check

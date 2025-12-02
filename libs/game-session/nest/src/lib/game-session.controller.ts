@@ -1,10 +1,13 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Post,
   UseGuards,
   ValidationPipe,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
 import { ApiOkResponse, ApiProperty, ApiTags } from '@nestjs/swagger';
 import { 
@@ -18,6 +21,8 @@ import {
   JoinGameSessionUseCase,
   ProcessSwipeUseCase,
   GenerateDeckUseCase,
+  GetGameSessionUseCase,
+  GetSessionMoviesUseCase,
   GameSession,
 } from '@plex-tinder/game-session/core';
 import { IsArray, IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator';
@@ -96,7 +101,9 @@ export class GameSessionController {
     private readonly createGameSessionUseCase: CreateGameSessionUseCase,
     private readonly joinGameSessionUseCase: JoinGameSessionUseCase,
     private readonly processSwipeUseCase: ProcessSwipeUseCase,
-    private readonly generateDeckUseCase: GenerateDeckUseCase
+    private readonly generateDeckUseCase: GenerateDeckUseCase,
+    private readonly getGameSessionUseCase: GetGameSessionUseCase,
+    private readonly getSessionMoviesUseCase: GetSessionMoviesUseCase
   ) {}
 
   @UseGuards(BetterAuthGuard)
@@ -137,7 +144,7 @@ export class GameSessionController {
       movieIds,
     });
 
-    return result.success.session;
+    return result.success?.session;
   }
 
   @UseGuards(BetterAuthGuard)
@@ -169,6 +176,58 @@ export class GameSessionController {
       movieId: input.movieId,
       liked: input.liked,
     });
+  }
+
+  @UseGuards(BetterAuthGuard)
+  @Get(':id')
+  @ApiOkResponse({ type: GameSession })
+  async getSession(
+    @CurrentUser() user: BetterAuthUser,
+    @Param('id') sessionId: string
+  ) {
+    const domainUser = betterAuthUserToDomainUser(user);
+    const result = await this.getGameSessionUseCase.execute({
+      sessionId,
+      userId: domainUser.id,
+    });
+
+    if (result.error) {
+      if (result.error.message === 'GameSession not found') {
+        throw new NotFoundException(result.error.message);
+      }
+      if (result.error.message === 'User is not a participant of this session') {
+        throw new ForbiddenException(result.error.message);
+      }
+      throw result.error;
+    }
+
+    return result.success?.session;
+  }
+
+  @UseGuards(BetterAuthGuard)
+  @Get(':id/movies')
+  @ApiOkResponse({ description: 'Returns movies in the session deck with full details' })
+  async getSessionMovies(
+    @CurrentUser() user: BetterAuthUser,
+    @Param('id') sessionId: string
+  ) {
+    const domainUser = betterAuthUserToDomainUser(user);
+    const result = await this.getSessionMoviesUseCase.execute({
+      sessionId,
+      userId: domainUser.id,
+    });
+
+    if (result.error) {
+      if (result.error.message === 'GameSession not found') {
+        throw new NotFoundException(result.error.message);
+      }
+      if (result.error.message === 'User is not a participant of this session') {
+        throw new ForbiddenException(result.error.message);
+      }
+      throw result.error;
+    }
+
+    return result.success;
   }
 }
 

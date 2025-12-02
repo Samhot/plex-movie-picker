@@ -6,6 +6,8 @@ import {
   IGameSessionNotifier,
   JoinGameSessionUseCase,
   ProcessSwipeUseCase,
+  GetGameSessionUseCase,
+  GetSessionMoviesUseCase,
 } from '@plex-tinder/game-session/core';
 import { PrismaGameSessionRepository } from '@plex-tinder/game-session/repos/prisma';
 import { GameSessionController } from './game-session.controller';
@@ -54,6 +56,17 @@ import { GameSessionGateway } from './GameSessionGateway';
       useFactory: (repo: IGameSessionRepository, notifier: IGameSessionNotifier) => 
         new ProcessSwipeUseCase(repo, notifier),
       inject: ['IGameSessionRepository', 'IGameSessionNotifier'],
+    },
+    {
+      provide: GetGameSessionUseCase,
+      useFactory: (repo: IGameSessionRepository) => new GetGameSessionUseCase(repo),
+      inject: ['IGameSessionRepository'],
+    },
+    {
+      provide: GetSessionMoviesUseCase,
+      useFactory: (repo: IGameSessionRepository, movieRepo: IMovieRepository) => 
+        new GetSessionMoviesUseCase(repo, movieRepo),
+      inject: ['IGameSessionRepository', 'IMovieRepository'],
     },
   ],
   exports: [],

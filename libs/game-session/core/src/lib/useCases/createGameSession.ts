@@ -4,6 +4,8 @@ import { IGameSessionRepository } from '../repositories/GameSessionRepository.in
 import { User } from '@plex-tinder/auth/core';
 import * as crypto from 'crypto';
 
+const MAX_CODE_RETRIES = 5;
+
 type Input = {
   host: User;
   movieIds: string[];
@@ -27,7 +29,27 @@ export class CreateGameSessionUseCase implements IUseCase<Input, Output> {
   }
 
   public async execute(input: Input) {
-    const code = this.generateShortCode();
+    // Generate unique code with retry logic
+    let code: string;
+    let attempts = 0;
+    
+    do {
+      code = this.generateShortCode();
+      const existingSession = await this.gameSessionRepository.findByCode(code);
+      
+      if (!existingSession) {
+        break; // Code is unique
+      }
+      
+      attempts++;
+      if (attempts >= MAX_CODE_RETRIES) {
+        return {
+          success: null,
+          error: new Error('Failed to generate unique session code after multiple attempts'),
+        };
+      }
+    } while (attempts < MAX_CODE_RETRIES);
+
     const sessionId = crypto.randomUUID();
 
     const session = new GameSession(

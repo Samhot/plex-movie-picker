@@ -6,6 +6,6 @@ export const userMock = User.required().parse({
   id: 'clt4339t0000008l660047031',
   authorizations: [],
   disabled: false,
-  fullName: faker.name.fullName(),
+  fullName: faker.person.fullName(),
   email: faker.internet.email(),
 } satisfies User);

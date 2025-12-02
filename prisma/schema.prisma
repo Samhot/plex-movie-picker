@@ -129,6 +129,7 @@ model GameSession {
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+  expiresAt   DateTime? // Session expires after this time (default: 24h from creation)
   
   @@map("game_session")
 }

@@ -6,7 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { Logger } from '@nestjs/common';
-import { IGameSessionNotifier } from '@plex-tinder/game-session/core';
+import { IGameSessionNotifier, SwipeProgressPayload } from '@plex-tinder/game-session/core';
 
 @WebSocketGateway({
   cors: {
@@ -43,6 +43,10 @@ export class GameSessionGateway implements OnGatewayConnection, OnGatewayDisconn
 
   notifyParticipantJoined(sessionId: string, user: { id: string; name: string }): void {
     this.server.to(sessionId).emit('participant_joined', { user });
+  }
+
+  notifySwipeProgress(sessionId: string, payload: SwipeProgressPayload): void {
+    this.server.to(sessionId).emit('swipe_progress', payload);
   }
 }
 
